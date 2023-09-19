@@ -1,0 +1,28 @@
+{
+	"name": "Mikhmon App",
+	"short_name": "Mikhmon By MyTunnelWebID",
+	"description": "MyTunnel Layanan VPN Remote, VPN Interkoneksi, Mikhmon Hosting, HTTP Reverse Proxy, dan DDNS untuk router mikrotik anda",
+	"lang": "id-ID",
+	"dir": "ltr",
+	"theme_color": "#EADBC8",
+	"start_url": "/",
+	"scope": "/",
+	"background_color": "#EADBC8",
+	"display": "standalone",
+	"orientation": "portrait-primary",
+    "icons": [
+      {
+        "src": "https://mytunnel.web.id/dist/images/pwa/icon-128x128.png",
+        "sizes": "128x128",
+        "type": "image/png",
+        "purpose": "any"
+      },
+      {
+        "src": "https://mytunnel.web.id/dist/images/pwa/icon-512x512.png",
+        "sizes": "512x512",
+        "type": "image/png",
+        "purpose": "any"
+      }
+    ]
+  }
+  
