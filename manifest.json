@@ -12,13 +12,13 @@
 	"orientation": "portrait-primary",
     "icons": [
       {
-        "src": "https://mytunnel.web.id/dist/images/pwa/icon-128x128.png",
+        "src": "/img/icon-128x128.png",
         "sizes": "128x128",
         "type": "image/png",
         "purpose": "any"
       },
       {
-        "src": "https://mytunnel.web.id/dist/images/pwa/icon-512x512.png",
+        "src": "/img/icon-512x512.png",
         "sizes": "512x512",
         "type": "image/png",
         "purpose": "any"
