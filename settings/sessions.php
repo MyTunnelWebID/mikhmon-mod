@@ -166,7 +166,7 @@ if (!isset($_SESSION["mikhmon"])) {
         </tr>
         
       </table>
-      <div id="loadV">v<?= $_SESSION['v']; ?> </div>
+      <div id="loadV">v<?= $_SESSION['vm']; ?> </div>
       <div><b id="newVer" class="text-green"></b></div>
     </div>
     </div>
@@ -213,48 +213,3 @@ if (!isset($_SESSION["mikhmon"])) {
     }
   }
 </script>
-
-<script>
-  var hname = window['location']['hostname'];
-var dom = hname.split('.')[1] + '.' + hname.split('.')[2];
-var domArray = ['mikhmon.online', 'xban.xyz', 'logam.id', 'minis.id'];
-var a = domArray.indexOf(hname);
-var b = domArray.indexOf(dom);
-
-if (dom == 'mikhmon.online') {
-    $('#newVer').addClass('text-white fa fa-info-circle');
-} else {
-    if (a > 0 || b > 0) {
-        // Do nothing
-    } else {
-        $.get('https://raw.githubusercontent.com/MyTunnelWebID/mikhmon-mod-pwa/main/version.txt?t=' + Math.floor((Math.random() * 999999999) + 1) * 128, function (response) {
-            getNewVer = response.split('<span class="text-white">')[1];
-            var newVersion = parseInt(getNewVer.split('</span>')[0]);
-            var currentElementById = document.getElementById('updateById');
-            var currentVersion = (currentElementById.getElementsByTagName('span')[0]).innerHTML.split('<span class="text-white">')[1];
-            var currentVersionNumber = parseInt(currentVersion.split('</span>')[0]);
-            var diff = newVersion - currentVersionNumber;
-
-            getNewVer = response.split('<span class="text-white">')[1];
-            var newVersion = parseInt(getNewVer.split('</span>')[0]);
-            var currentElementById = document.getElementById('updateById');
-            var currentVersion = (currentElementById.getElementsByTagName('span')[0]).innerHTML.split('<span class="text-white">')[1];
-            var currentVersionNumber = parseInt(currentVersion.split('</span>')[0]);
-            var diff = newVersion - currentVersionNumber;
-            if (diff > 0) {
-                $('#newVer').addClass('text-white fa fa-bell');
-            }
-        });
-    }
-}
-</script>
-
-
-
-
-
-
-
-
-
-

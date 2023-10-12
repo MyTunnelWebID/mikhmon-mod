@@ -13,7 +13,7 @@ if (!isset($_SESSION["mikhmon"])) {
 
     /* Version ChangeLog */
         $_SESSION["v"] = "3.20 06-30-2021";
-        $_SESSION["vm-old"] = "1.00 01-09-2023";
-        $_SESSION["vm"] = "1.02 12-10-2023";
+        $_SESSION["vm-old"] = "1.00 09-01-2023";
+        $_SESSION["vm"] = "1.02 10-12-2023";
     /* Version ChangeLog */
     }
