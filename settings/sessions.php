@@ -189,7 +189,7 @@ if (!isset($_SESSION["mikhmon"])) {
                 <p>
                   <ul>
                     <li>
-                      Vpn Remote : Mulai dari Rp 2.000/bln
+                      VPN Remote : Mulai dari Rp 2.000/bln
                     </li>
                     <li>
                       VPN Masking : Mulai dari Rp 2.000/bln
