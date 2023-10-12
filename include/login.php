@@ -41,11 +41,15 @@ session_start();
           </td>
         </tr>
         <tr>
-          <td class="align-middle">
+        <td class="align-middle text-center">
+          <div style="position: relative;">
             <input style="width: 100%; height: 35px; font-size: 16px;" class="form-control" type="password" name="pass" placeholder="Password" id="password" required="1">
-            <i><input type="checkbox" class="pointer" id="togglePassword" style="width: 15px; height:15px; margin-top: -60px; margin-left:300px"></i>
-          </td>
-        </tr>
+            <i style="position: absolute; top: 45%; right: 10px; transform: translateY(-50%);">
+              <input type="checkbox" class="pointer" id="togglePassword" style="width: 15px; height: 15px;">
+            </i>
+          </div>
+        </td>
+      </tr>
         <tr>
           <td class="align-middle text-center">
             <input style="width: 100%; margin-top:0px; height: 35px; font-weight: bold; font-size: 17px;" class="btn-login bg-primary pointer" type="submit" name="login" value="Login">
