@@ -30,7 +30,7 @@ session_start();
         <img src="img/favicon.png" alt="MIKHMON Logo">
       </div>
       <div  class="text-center">
-      <span style="font-size: 25px; margin: 10px;">MIKHMON</span>
+      <span style="font-size: 25px; margin: 10px;">MIKHMON <b>MOD</b></span>
       </div>
       <center>
       <form autocomplete="off" action="" method="post">
@@ -41,13 +41,14 @@ session_start();
           </td>
         </tr>
         <tr>
-          <td class="align-middle text-center">
-            <input style="width: 100%; height: 35px; font-size: 16px;" class="form-control" type="password" name="pass" placeholder="Password" required="1">
+          <td class="align-middle">
+            <input style="width: 100%; height: 35px; font-size: 16px;" class="form-control" type="password" name="pass" placeholder="Password" id="password" required="1">
+            <i><input type="checkbox" class="pointer" id="togglePassword" style="width: 15px; height:15px; margin-top: -60px; margin-left:300px"></i>
           </td>
         </tr>
         <tr>
           <td class="align-middle text-center">
-            <input style="width: 100%; margin-top:20px; height: 35px; font-weight: bold; font-size: 17px;" class="btn-login bg-primary pointer" type="submit" name="login" value="Login">
+            <input style="width: 100%; margin-top:0px; height: 35px; font-weight: bold; font-size: 17px;" class="btn-login bg-primary pointer" type="submit" name="login" value="Login">
           </td>
         </tr>
         <tr>
@@ -64,3 +65,17 @@ session_start();
 
 </body>
 </html>
+<script>
+  const passwordInput = document.getElementById("password");
+  const togglePasswordButton = document.getElementById("togglePassword");
+
+  togglePasswordButton.addEventListener("click", function () {
+      if (passwordInput.type === "password") {
+          passwordInput.type = "text";
+          togglePasswordButton.textContent = "Hide Password";
+      } else {
+          passwordInput.type = "password";
+          togglePasswordButton.textContent = "Show Password";
+      }
+  });
+  </script>

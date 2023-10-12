@@ -39,11 +39,12 @@ if (!isset($_SESSION["mikhmon"])) {
   border :none;
 }
 </style>
+<!-- About Author-->
 <div class="row">
   <div class="col-12">
     <div class="card">
       <div class="card-header">
-        <h3><i class="fa fa-info-circle"></i> About</h3>
+        <h3><i class="fa fa-info-circle"></i> About Author</h3>
       </div>
       <div class="card-body">
         <h3>MIKHMON V<?= $_SESSION['v']; ?></h3>
@@ -79,6 +80,51 @@ if (!isset($_SESSION["mikhmon"])) {
 </div>
 </div>
 </div>
+<!-- About Author-->
+
+<!-- About Modification -->
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <h3><i class="fa fa-info-circle"></i> About Mod</h3>
+      </div>
+      <div class="card-body">
+        <h3>MIKHMON V<?= $_SESSION['vm']; ?></h3>
+<p>
+  Aplikasi ini hasil dari modifikasi <?= $_SESSION['author-mod']; ?>, dan memiliki beberapa perubahan didalamnya. Namun, tidak menghilangkan ciri khas dari fitur utamanya.<br>
+  Dan hanya tersedia didalam fitur dari website <?= $_SESSION['website-mod']; ?>.
+</p>
+<p>
+  <ul>
+    <li>
+      Author : <?= $_SESSION['author-mod']; ?>
+    </li>
+    <li>
+      Licence : <a href="#"><?= $_SESSION['licence-mod']; ?></a>
+    </li>
+    <li>
+      Website : <a href="<?= $_SESSION['website-mod']; ?>"><?= $_SESSION['website-mod']; ?></a>
+    </li>
+    <li>
+      Facebook : <a href="<?= $_SESSION['facebook-mod']; ?>"><?= $_SESSION['facebook-mod']; ?></a>
+    </li>
+    <li>
+      Telegram Group : <a href="https://t.me/+l4Gi2kHAIgNiNTE1">Join now!</a>
+    </li>
+  </ul>
+</p>
+<p>
+  Terima kasih untuk semua yang telah mendukung pengembangan MIKHMON.
+</p>
+<div>
+    <i>Copyright &copy; <i> <?= $_SESSION['copyright-mod']; ?></i></i>
+</div>
+</div>
+</div>
+</div>
+<!-- About Modification -->
+
 <div class="col-12">
 <div class="card">
   <div class="card-header">

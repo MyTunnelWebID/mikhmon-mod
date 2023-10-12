@@ -41,7 +41,6 @@ error_reporting(0);
 		<!-- pace -->
 		<link href="css/pace.<?= $theme; ?>.css" rel="stylesheet" />
 		<script src="js/pace.min.js"></script>
-
 		<!-- custom pwa -->
 		<meta name="apple-mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -50,8 +49,7 @@ error_reporting(0);
 		<script src="./index.js" type="module"></script>
 		<link rel="manifest" href="./manifest.json?1695132430">
 		<!-- custom pwa -->
-
-		
+		<script src="https://kit.fontawesome.com/3f276def05.js" crossorigin="anonymous"></script>
 	</head>
 	<body>
 		<div class="wrapper">
