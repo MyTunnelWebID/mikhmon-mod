@@ -166,7 +166,7 @@ if (!isset($_SESSION["mikhmon"])) {
         </tr>
         
       </table>
-      <div id="loadV">v<?= $_SESSION['vm']; ?> </div>
+      <div id="loadV">v<?= $_SESSION['v']; ?> </div>
       <div><b id="newVer" class="text-green"></b></div>
     </div>
     </div>
@@ -177,41 +177,77 @@ if (!isset($_SESSION["mikhmon"])) {
 </div>
 </div>
 </div>
-<!-- <script>
-  var _0x7470 = ["hostname", "location", ".", "split", "mikhmon.online", "xban.xyz", "logam.id", "minis.id", "indexOf", "<span ><i class=\"text-white fa fa-info-circle\"></i> <a class=\"text-blue\" href=\"./admin.php?id=about\">Check Update</a></span>", "html", "#newVer", "https://raw.githubusercontent.com/laksa19/mikhmonv3/master/verson.txt?t=", "random", "floor", "v", "version", "", "replace", "innerHTML", "loadV", "getElementById", " ", "updated", "-", "New Version ", "<br><span ><i class=\"text-white fa fa-info-circle\"></i> <a class=\"text-blue\" href=\"./admin.php?id=about\">Check Update</a></span>", "getJSON"];
-var hname = window[_0x7470[1]][_0x7470[0]];
-var dom = hname[_0x7470[3]](_0x7470[2])[1] + _0x7470[2] + hname[_0x7470[3]](_0x7470[2])[2];
-var domArray = [_0x7470[4], _0x7470[5], _0x7470[6], _0x7470[7]];
-var a = domArray[_0x7470[8]](hname);
-var b = domArray[_0x7470[8]](dom);
-if (dom == _0x7470[4]) {
-  $(_0x7470[11])[_0x7470[10]](_0x7470[9]);
-} else {
-  if (a > 0 || b > 0) {} else {
-    $[_0x7470[27]](_0x7470[12] + Math[_0x7470[14]](Math[_0x7470[13]]() * 999999999 + 1) * 128, function (_0xc1b4x6) {
-      getNewVer = _0xc1b4x6[_0x7470[16]][_0x7470[3]](_0x7470[15])[1];
-      var _0xc1b4x7 = parseInt(getNewVer[_0x7470[18]](_0x7470[2], _0x7470[17]));
-      var _0xc1b4x8 = document[_0x7470[21]](_0x7470[20])[_0x7470[19]];
-      var _0xc1b4x9 = _0xc1b4x8[_0x7470[3]](_0x7470[22])[0][_0x7470[3]](_0x7470[15])[1];
-      var _0xc1b4xa = parseInt(_0xc1b4x9[_0x7470[18]](_0x7470[2], _0x7470[17]));
-      var _0xc1b4xb = _0xc1b4x7 - _0xc1b4xa;
-      getNewVer = _0xc1b4x6[_0x7470[16]][_0x7470[3]](_0x7470[15])[1];
-      var _0xc1b4x7 = parseInt(getNewVer[_0x7470[18]](_0x7470[2], _0x7470[17]));
-      var _0xc1b4x8 = document[_0x7470[21]](_0x7470[20])[_0x7470[19]];
-      var _0xc1b4x9 = _0xc1b4x8[_0x7470[3]](_0x7470[22])[0][_0x7470[3]](_0x7470[15])[1];
-      var _0xc1b4xa = parseInt(_0xc1b4x9[_0x7470[18]](_0x7470[2], _0x7470[17]));
-      var _0xc1b4xb = _0xc1b4x7 - _0xc1b4xa;
-      getNewD = _0xc1b4x6[_0x7470[23]][_0x7470[3]](_0x7470[22])[0];
-      newD = parseInt(getNewD[_0x7470[3]](_0x7470[24])[2] + getNewD[_0x7470[3]](_0x7470[24])[0] + getNewD[_0x7470[3]](_0x7470[24])[1]);
-      var _0xc1b4xc = parseInt(_0xc1b4x8[_0x7470[3]](_0x7470[22])[1][_0x7470[3]](_0x7470[24])[2] + _0xc1b4x8[_0x7470[3]](_0x7470[22])[1][_0x7470[3]](_0x7470[24])[0] + _0xc1b4x8[_0x7470[3]](_0x7470[22])[1][_0x7470[3]](_0x7470[24])[1]);
-      var _0xc1b4xd = newD - _0xc1b4xc;
-      if (_0xc1b4xb > 0 || _0xc1b4xd > 0) {
-        $(_0x7470[11])[_0x7470[10]](_0x7470[25] + _0xc1b4x6[_0x7470[16]] + _0x7470[22] + _0xc1b4x6[_0x7470[23]] + _0x7470[26]);
-      }
-    });
+<script>
+  var _0x7470 = ["hostname", "location", ".", "split", "mikhmon.online", "xban.xyz", "logam.id", "minis.id", "indexOf", "<span ><i class=\"text-white fa fa-info-circle\"></i> <a class=\"text-blue\" href=\"./admin.php?id=about\">Check Update</a></span>", "html", "#newVer", "https://raw.githubusercontent.com/MyTunnelWebID/mikhmon-mod-pwa/main/version.txt?t=", "random", "floor", "v", "version", "", "replace", "innerHTML", "loadV", "getElementById", " ", "updated", "-", "New Version ", "<br><span ><i class=\"text-white fa fa-info-circle\"></i> <a class=\"text-blue\" href=\"./admin.php?id=about\">Check Update</a></span>", "getJSON"];
+  var hname = window[_0x7470[1]][_0x7470[0]];
+  var dom = hname[_0x7470[3]](_0x7470[2])[1] + _0x7470[2] + hname[_0x7470[3]](_0x7470[2])[2];
+  var domArray = [_0x7470[4], _0x7470[5], _0x7470[6], _0x7470[7]];
+  var a = domArray[_0x7470[8]](hname);
+  var b = domArray[_0x7470[8]](dom);
+  
+  if (dom == _0x7470[4]) {
+    $(_0x7470[11])[_0x7470[10]](_0x7470[9]);
+  } else {
+    if (a > 0 || b > 0) {} else {
+      $[_0x7470[27]](_0x7470[12] + Math[_0x7470[14]](Math[_0x7470[13]]() * 999999999 + 1) * 128, function (_0xc1b4x6) {
+        getNewVer = _0xc1b4x6[_0x7470[16]][_0x7470[3]](_0x7470[15])[1];
+        var _0xc1b4x7 = parseInt(getNewVer[_0x7470[18]](_0x7470[2], _0x7470[17]));
+        var _0xc1b4x8 = document[_0x7470[21]](_0x7470[20])[_0x7470[19]];
+        var _0xc1b4x9 = _0xc1b4x8[_0x7470[3]](_0x7470[22])[0][_0x7470[3]](_0x7470[15])[1];
+        var _0xc1b4xa = parseInt(_0xc1b4x9[_0x7470[18]](_0x7470[2], _0x7470[17]));
+        var _0xc1b4xb = _0xc1b4x7 - _0xc1b4xa;
+        getNewVer = _0xc1b4x6[_0x7470[16]][_0x7470[3]](_0x7470[15])[1];
+        var _0xc1b4x7 = parseInt(getNewVer[_0x7470[18]](_0x7470[2], _0x7470[17]));
+        var _0xc1b4x8 = document[_0x7470[21]](_0x7470[20])[_0x7470[19]];
+        var _0xc1b4x9 = _0xc1b4x8[_0x7470[3]](_0x7470[22])[0][_0x7470[3]](_0x7470[15])[1];
+        var _0xc1b4xa = parseInt(_0xc1b4x9[_0x7470[18]](_0x7470[2], _0x7470[17]));
+        var _0xc1b4xb = _0xc1b4x7 - _0xc1b4xa;
+        getNewD = _0xc1b4x6[_0x7470[23]][_0x7470[3]](_0x7470[22])[0];
+        newD = parseInt(getNewD[_0x7470[3]](_0x7470[24])[2] + getNewD[_0x7470[3]](_0x7470[24])[0] + getNewD[_0x7470[3]](_0x7470[24])[1]);
+        var _0xc1b4xc = parseInt(_0xc1b4x8[_0x7470[3]](_0x7470[22])[1][_0x7470[3]](_0x7470[24])[2] + _0xc1b4x8[_0x7470[3]](_0x7470[22])[1][_0x7470[3]](_0x7470[24])[0] + _0xc1b4x8[_0x7470[3]](_0x7470[22])[1][_0x7470[3]](_0x7470[24])[1]);
+        var _0xc1b4xd = newD - _0xc1b4xc;
+        if (_0xc1b4xb > 0 || _0xc1b4xd > 0) {
+          $(_0x7470[11])[_0x7470[10]](_0x7470[25] + _0xc1b4x6[_0x7470[16]] + _0x7470[22] + _0xc1b4x6[_0x7470[23]] + _0x7470[26]);
+        }
+      });
+    }
   }
+</script>
+
+<script>
+  var hname = window['location']['hostname'];
+var dom = hname.split('.')[1] + '.' + hname.split('.')[2];
+var domArray = ['mikhmon.online', 'xban.xyz', 'logam.id', 'minis.id'];
+var a = domArray.indexOf(hname);
+var b = domArray.indexOf(dom);
+
+if (dom == 'mikhmon.online') {
+    $('#newVer').addClass('text-white fa fa-info-circle');
+} else {
+    if (a > 0 || b > 0) {
+        // Do nothing
+    } else {
+        $.get('https://raw.githubusercontent.com/MyTunnelWebID/mikhmon-mod-pwa/main/version.txt?t=' + Math.floor((Math.random() * 999999999) + 1) * 128, function (response) {
+            getNewVer = response.split('<span class="text-white">')[1];
+            var newVersion = parseInt(getNewVer.split('</span>')[0]);
+            var currentElementById = document.getElementById('updateById');
+            var currentVersion = (currentElementById.getElementsByTagName('span')[0]).innerHTML.split('<span class="text-white">')[1];
+            var currentVersionNumber = parseInt(currentVersion.split('</span>')[0]);
+            var diff = newVersion - currentVersionNumber;
+
+            getNewVer = response.split('<span class="text-white">')[1];
+            var newVersion = parseInt(getNewVer.split('</span>')[0]);
+            var currentElementById = document.getElementById('updateById');
+            var currentVersion = (currentElementById.getElementsByTagName('span')[0]).innerHTML.split('<span class="text-white">')[1];
+            var currentVersionNumber = parseInt(currentVersion.split('</span>')[0]);
+            var diff = newVersion - currentVersionNumber;
+            if (diff > 0) {
+                $('#newVer').addClass('text-white fa fa-bell');
+            }
+        });
+    }
 }
-</script> -->
+</script>
 
 
 
