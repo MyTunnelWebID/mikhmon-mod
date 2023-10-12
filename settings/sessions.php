@@ -71,9 +71,10 @@ if (!isset($_SESSION["mikhmon"])) {
   		</div>
       <div class="card-body">
         <div class="row">
+          
           <div class="col-6">
+          <!-- Router List -->
             <div class="card">
-              
               <div class="card-header">
                 <h3 class="card-title"><i class="fa fa-server"></i> <?= $_router_list ?></h3>
               </div>
@@ -109,14 +110,16 @@ if (!isset($_SESSION["mikhmon"])) {
                               
                             </div>
                           </div>
-              <?php
-            }
-          }
-          ?>
+                          <?php
+                              }
+                            }
+                            ?>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-        </div>
+          <!-- Router List -->
+        
 			    <div class="col-6">
           <form autocomplete="off" method="post" action="">
             <div class="card">
@@ -171,6 +174,50 @@ if (!isset($_SESSION["mikhmon"])) {
     </div>
     </div>
     </form>
+    
+          <!-- Adverstisment -->
+          <div class="card">
+              <div class="card-header">
+                <h3 class="card-title"><i class="fa fa-tag"></i> Advertisement</h3>
+              </div>
+            <div class="card-body">
+            <div class="row">
+            <h3>MIKHMON MOD V<?= $_SESSION['vm']; ?></h3>
+                <p>
+                  Jika kamu seorang pengusaha wifi voucher maupun RT/RW NET dan tidak memiliki IP Public untuk bisa memantau server jaringan dari jarak jauh, silahkan coba layanan dari <a href="<?= $_SESSION['website-mod']; ?>">MyTunnel</a>.
+                </p>
+                <p>
+                  <ul>
+                    <li>
+                      Vpn Remote : Mulai dari Rp 2.000/bln
+                    </li>
+                    <li>
+                      VPN Masking : Mulai dari Rp 2.000/bln
+                    </li>
+                    <li>
+                      VPN Traffic : Mulai dari Rp 10.000/bln
+                    </li>
+                    <li>
+                      VPN Interkoneksi : Mulai dari Rp 2.000/bln
+                    </li>
+                    <li>
+                      Mikhmon Online : Mulai dari Rp 5.000/bln
+                    </li>
+                  </ul>
+                </p>
+                <p>Kunjungi sekarang:
+                  <a href="<?= $_SESSION['website-mod']; ?>"><?= $_SESSION['website-mod']; ?></a>
+                </p>
+                <p>
+                  Terima kasih untuk semua yang telah mendukung pengembangan MIKHMON MOD.
+                </p>
+                <div>
+                  <i>Copyright &copy; <i> <?= $_SESSION['copyright-mod']; ?></i></i>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Adverstisment -->
   </div>
 </div>
 </div>
