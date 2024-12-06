@@ -260,3 +260,4 @@ if (!isset($_SESSION["mikhmon"])) {
       });
     }
   }
+</script>
