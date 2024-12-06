@@ -50,6 +50,9 @@ if (!isset($_SESSION["mikhmon"])) {
   $getlog = $API->comm("/log/print", array("?topics" => "hotspot,info,debug", ));
   $log = array_reverse($getlog);
   $THotspotLog = count($getlog);
+  $getlog = $API->comm("/log/print", array("?topics" => "pppoe,ppp,info,account", ));
+  $log = array_reverse($getlog);
+  $THotspotLog = count($getlog);
 */
 // get & counting hotspot users
   $countallusers = $API->comm("/ip/hotspot/user/print", array("count-only" => ""));
@@ -74,6 +77,30 @@ if (!isset($_SESSION["mikhmon"])) {
     $logh = "350px";
     $lreport = "style='display:block;'";
   }
+  
+   // get & counting hotspot users
+    $countprofiles = count($API->comm("/ppp/profile/print"));
+    if ($countprofiles < 2) {
+        $uunit = "item";
+    } elseif ($countprofiles > 1) {
+        $uunit = "items";
+    }
+
+    // get & counting ppp secrets
+    $countsecrets = count($API->comm("/ppp/secret/print"));
+    if ($countsecrets < 2) {
+        $hunit = "item";
+    } elseif ($countsecrets > 1) {
+        $hunit = "items";
+    }
+
+    // get & counting ppp secrets
+    $countpppactive = count($API->comm("/ppp/active/print"));
+    if ($countpppactive < 2) {
+        $hunit = "item";
+    } elseif ($countpppactive > 1) {
+        $hunit = "items";
+    }
 /*
 // get selling report
     $thisD = date("d");
@@ -227,8 +254,59 @@ if (!isset($_SESSION["mikhmon"])) {
             </div>
           </div>
           </div>
-            <div class="card">
-              <div class="card-header"><h3><i class="fa fa-area-chart"></i> <?= $_traffic ?> </h3></div>
+		  <div id="r_2"class="row">
+			<div class="card">
+				<div class="card-header">
+					<h3><i class="fa fa-wifi"></i> PPP</h3>
+				</div>
+				<div class="card-body">
+					<div class="row">
+						<div class="col-4 col-box-6">
+							<div class="box bg-blue bmh-75">
+								<a onclick="cancelPage()" href="./?ppp=active&session=<?= $session; ?>">
+									<h1><?= $countpppactive; ?>
+										<span style="font-size: 15px;"><?= $hunit; ?></span>
+									</h1>
+									<div>
+										<i class="fa fa-laptop"></i> <?= $_ppp_active ?>
+									</div>
+								</a>
+							</div>
+						</div>
+						<div class="col-4 col-box-6">
+							<div class="box bg-green bmh-75">
+								<a onclick="cancelPage()" href="./?ppp=profiles&session=<?= $session; ?>">
+									<h1><?= $countprofiles; ?>
+										<span style="font-size: 15px;"><?= $uunit; ?></span>
+									</h1>
+									<div>
+										<i class="fa fa-users"></i> <?= $_ppp_profiles ?>
+									</div>
+								</a>
+							</div>
+						</div>
+						<div class="col-4 col-box-12">
+							<div class="box bg-danger bmh-75">
+								<a onclick="cancelPage()" href="./?ppp=secrets&session=<?= $session; ?>">
+									<h1><?= $countsecrets; ?>
+										<span style="font-size: 15px;"><?= $uunit; ?></span>
+									</h1>
+									<div>
+										<i class="fa fa-user-secret"></i> <?= $_ppp_secrets ?>
+									</div>
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>           
+          </div>
+           
+			<div class="card">
+				<div class="card-header">
+					<h3><i class="fa fa-area-chart"></i> <?= $_traffic ?> </h3>
+				</div>
+
 
               <div class="card-body">
   

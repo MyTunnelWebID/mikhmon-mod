@@ -22,7 +22,7 @@ error_reporting(0);
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>MIKHMON <?= $hotspotname; ?></title>
+		<title>MIKHMON MOD - <?= $hotspotname; ?></title>
 		<meta charset="utf-8">
 		<meta http-equiv="cache-control" content="private" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -47,7 +47,7 @@ error_reporting(0);
 		<meta name="apple-mobile-web-app-title" content="" />
     	<link rel="apple-touch-icon" href="./img/favicon.png" />
 		<script src="./index.js" type="module"></script>
-		<link rel="manifest" href="./manifest.json?1695132430">
+		<link rel="manifest" href="./manifest.json?<?php echo date("ymds") ?>">
 		<!-- custom pwa -->
 		<script src="https://kit.fontawesome.com/3f276def05.js" crossorigin="anonymous"></script>
 	</head>

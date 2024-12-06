@@ -1,4 +1,4 @@
-						
+
 <style>
 	.qrcode{
 		height:80px;
@@ -87,4 +87,4 @@
       </td>
     </tr>
   </tbody>
-</table>	        
+</table>

@@ -90,7 +90,7 @@ if (!isset($_SESSION["mikhmon"])) {
         <h3><i class="fa fa-info-circle"></i> About Mod</h3>
       </div>
       <div class="card-body">
-        <h3>MIKHMON V<?= $_SESSION['vm']; ?></h3>
+        <h3>MIKHMON MOD V<?= $_SESSION['vm']; ?></h3>
 <p>
   Aplikasi ini hasil dari modifikasi <?= $_SESSION['author-mod']; ?>, dan memiliki beberapa perubahan didalamnya. Namun, tidak menghilangkan ciri khas dari fitur utamanya.<br>
   Dan hanya tersedia didalam fitur dari website <?= $_SESSION['website-mod']; ?>.
@@ -125,7 +125,7 @@ if (!isset($_SESSION["mikhmon"])) {
 </div>
 <!-- About Modification -->
 
-<div class="col-12">
+<!-- <div class="col-12">
 <div class="card">
   <div class="card-header">
   <h3><i class="fa fa-info-circle"></i> Changelog</h3>
@@ -137,4 +137,4 @@ if (!isset($_SESSION["mikhmon"])) {
   </div>
 </div>
 </div>
-</div>
+</div> -->
