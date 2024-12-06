@@ -226,7 +226,7 @@ if (!isset($_SESSION["mikhmon"])) {
 </div>
 <script>
   // var _0x7470 = ["hostname", "location", ".", "split", "mikhmon.online", "mikhman.my.id", "logam.id", "minis.id", "indexOf", "<span ><i class=\"text-white fa fa-info-circle\"></i> <a class=\"text-blue\" href=\"./admin.php?id=about\">Check Update</a></span>", "html", "#newVer", "https://raw.githubusercontent.com/MyTunnelWebID/mikhmon-mod/main/version.txt?t=", "random", "floor", "v", "version", "", "replace", "innerHTML", "loadV", "getElementById", " ", "updated", "-", "New Version ", "<br><span ><i class=\"text-white fa fa-info-circle\"></i> <a class=\"text-blue\" href=\"./admin.php?id=about\">Check Update</a></span>", "getJSON"];
-  var _0x7470 = ["hostname", "location", ".", "split", "mikhmon.online", "mikhman.my.id", "logam.id", "minis.id", "indexOf", "<span ><i class=\"text-white fa fa-info-circle\"></i> <a class=\"text-blue\" href=\"./admin.php?id=about\">Check Update</a></span>", "html", "#newVer", "https://raw.githubusercontent.com/MyTunnelWebID/mikhmon-mod/main/version.txt?t=", "random", "floor", "v", "version", "", "replace", "innerHTML", "loadV", "getElementById", " ", "updated", "-", "New Version ", "<br><span ><i class=\"text-white fa fa-info-circle\"></i> <a class=\"text-blue\" href=\"./admin.php?id=about\">Check Update</a></span>", "getJSON"];
+  var _0x7470 = ["hostname", "location", ".", "split", "mikhman.my.id", "indexOf", "<span ><i class=\"text-white fa fa-info-circle\"></i> <a class=\"text-blue\" href=\"./admin.php?id=about\">Check Update</a></span>", "html", "#newVer", "https://raw.githubusercontent.com/MyTunnelWebID/mikhmon-mod/main/version.txt?t=", "random", "floor", "v", "version", "", "replace", "innerHTML", "loadV", "getElementById", " ", "updated", "-", "New Version ", "<br><span ><i class=\"text-white fa fa-info-circle\"></i> <a class=\"text-blue\" href=\"./admin.php?id=about\">Check Update</a></span>", "getJSON"];
   var hname = window[_0x7470[1]][_0x7470[0]];
   var dom = hname[_0x7470[3]](_0x7470[2])[1] + _0x7470[2] + hname[_0x7470[3]](_0x7470[2])[2];
   var domArray = [_0x7470[4], _0x7470[5], _0x7470[6], _0x7470[7]];
@@ -260,4 +260,3 @@ if (!isset($_SESSION["mikhmon"])) {
       });
     }
   }
-</script>
