@@ -224,6 +224,38 @@ if (!isset($_SESSION["mikhmon"])) {
 </div>
 </div>
 </div>
+<!-- <script>
+  var hname = window.location.hostname;
+  var dom = hname.split(".")[1] + "." + hname.split(".")[2];
+  var domArray = ["mikhman.my.id"];
+  var a = domArray.indexOf(hname);
+  var b = domArray.indexOf(dom);
+  
+  if (dom == "mikhman.my.id") {
+    $("#newVer").html('<span ><i class="text-white fa fa-info-circle"></i> <a class="text-blue" href="./admin.php?id=about">Check Update</a></span>');
+  } else {
+    if (a > 0 || b > 0) {
+      // do nothing
+    } else {
+      $.getJSON("https://raw.githubusercontent.com/MyTunnelWebID/mikhmon-mod/main/version.txt?t=" + Math.floor(Math.random() * 999999999 + 1) * 128, function (data) {
+        var getNewVer = data.version.split("v")[1];
+        var newVer = parseInt(getNewVer.replace(".", ""));
+        var currentVer = document.getElementById("loadV").innerHTML;
+        var currentVersion = parseInt(currentVer.split(" ")[0].split("v")[1].replace(".", ""));
+        var versionDifference = newVer - currentVersion;
+
+        var getNewDate = data.updated.split("-")[0];
+        var newDate = parseInt(getNewDate.split("-")[2] + getNewDate.split("-")[0] + getNewDate.split("-")[1]);
+        var currentDate = parseInt(currentVer.split(" ")[1].split("-")[2] + currentVer.split(" ")[1].split("-")[0] + currentVer.split(" ")[1].split("-")[1]);
+        var dateDifference = newDate - currentDate;
+
+        if (versionDifference > 0 || dateDifference > 0) {
+          $("#newVer").html("New Version " + data.version + " " + data.updated + '<br><span ><i class="text-white fa fa-info-circle"></i> <a class="text-blue" href="./admin.php?id=about">Check Update</a></span>');
+        }
+      });
+    }
+  }
+</script> -->
 <script>
   var _0x35a017=_0x57ea;function _0x51d8(){var _0x2d967c=['2782503eiPAhG','mikhman.my.id','hostname','423247dXUJEU','1346093pIQymg','loadV','indexOf','<br><span\x20><i\x20class=\x22text-white\x20fa\x20fa-info-circle\x22></i>\x20<a\x20class=\x22text-blue\x22\x20href=\x22./admin.php?id=about\x22>Check\x20Update</a></span>','updated','8CUlQPF','html','2GZZIwv','249136nximiP','version','4849710CXdJzX','location','New\x20Version\x20','1960008qSFKtB','replace','#newVer','split','4629590TPGbbt','getElementById'];_0x51d8=function(){return _0x2d967c;};return _0x51d8();}(function(_0x1fa2da,_0x70ad5b){var _0x575b62=_0x57ea,_0x243b36=_0x1fa2da();while(!![]){try{var _0x56f90f=parseInt(_0x575b62(0xae))/0x1*(parseInt(_0x575b62(0xb6))/0x2)+parseInt(_0x575b62(0xb9))/0x3+-parseInt(_0x575b62(0xb7))/0x4+-parseInt(_0x575b62(0xa9))/0x5+-parseInt(_0x575b62(0xa5))/0x6+parseInt(_0x575b62(0xaf))/0x7*(-parseInt(_0x575b62(0xb4))/0x8)+parseInt(_0x575b62(0xab))/0x9;if(_0x56f90f===_0x70ad5b)break;else _0x243b36['push'](_0x243b36['shift']());}catch(_0x257c4e){_0x243b36['push'](_0x243b36['shift']());}}}(_0x51d8,0xcd857));function _0x57ea(_0x1732e2,_0x4ad872){var _0x51d80d=_0x51d8();return _0x57ea=function(_0x57ea37,_0x119367){_0x57ea37=_0x57ea37-0xa4;var _0x16d3e4=_0x51d80d[_0x57ea37];return _0x16d3e4;},_0x57ea(_0x1732e2,_0x4ad872);}var hname=window[_0x35a017(0xba)][_0x35a017(0xad)],dom=hname[_0x35a017(0xa8)]('.')[0x1]+'.'+hname[_0x35a017(0xa8)]('.')[0x2],domArray=[_0x35a017(0xac)],a=domArray[_0x35a017(0xb1)](hname),b=domArray[_0x35a017(0xb1)](dom);if(dom==_0x35a017(0xac))$('#newVer')[_0x35a017(0xb5)]('<span\x20><i\x20class=\x22text-white\x20fa\x20fa-info-circle\x22></i>\x20<a\x20class=\x22text-blue\x22\x20href=\x22./admin.php?id=about\x22>Check\x20Update</a></span>');else{if(a>0x0||b>0x0){}else $['getJSON']('https://raw.githubusercontent.com/MyTunnelWebID/mikhmon-mod/main/version.txt?t='+Math['floor'](Math['random']()*0x3b9ac9ff+0x1)*0x80,function(_0x4f08a9){var _0x2ce0e3=_0x35a017,_0x283347=_0x4f08a9[_0x2ce0e3(0xb8)][_0x2ce0e3(0xa8)]('v')[0x1],_0x541884=parseInt(_0x283347[_0x2ce0e3(0xa6)]('.','')),_0x2743f5=document[_0x2ce0e3(0xaa)](_0x2ce0e3(0xb0))['innerHTML'],_0x44a35d=parseInt(_0x2743f5[_0x2ce0e3(0xa8)]('\x20')[0x0][_0x2ce0e3(0xa8)]('v')[0x1][_0x2ce0e3(0xa6)]('.','')),_0x5504ed=_0x541884-_0x44a35d,_0x58e988=_0x4f08a9[_0x2ce0e3(0xb3)][_0x2ce0e3(0xa8)]('-')[0x0],_0x166ad2=parseInt(_0x58e988[_0x2ce0e3(0xa8)]('-')[0x2]+_0x58e988[_0x2ce0e3(0xa8)]('-')[0x0]+_0x58e988['split']('-')[0x1]),_0x219e0f=parseInt(_0x2743f5[_0x2ce0e3(0xa8)]('\x20')[0x1]['split']('-')[0x2]+_0x2743f5[_0x2ce0e3(0xa8)]('\x20')[0x1][_0x2ce0e3(0xa8)]('-')[0x0]+_0x2743f5['split']('\x20')[0x1][_0x2ce0e3(0xa8)]('-')[0x1]),_0xc03e7c=_0x166ad2-_0x219e0f;(_0x5504ed>0x0||_0xc03e7c>0x0)&&$(_0x2ce0e3(0xa7))[_0x2ce0e3(0xb5)](_0x2ce0e3(0xa4)+_0x4f08a9[_0x2ce0e3(0xb8)]+'\x20'+_0x4f08a9['updated']+_0x2ce0e3(0xb2));});}
 </script>
