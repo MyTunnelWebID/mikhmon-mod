@@ -191,11 +191,11 @@ function number_format(number, decimals, dec_point, thousands_sep) {
           var dataTable = document.getElementById("selling");
           
           // use querySelector to find all second table cells
-          var cells = document.querySelectorAll("td + td + td + td + td + td");
+          var cells = document.querySelectorAll("#dataTable td + td + td + td + td + td");
           for (var i = 0; i < cells.length; i++)
           sum+=parseFloat(cells[i].firstChild.data);
           
-          var th = document.getElementById('total');
+         var th = document.getElementById('total');
     <?php if ($currency == in_array($currency, $cekindo['indo'])) {
       echo 'th.innerHTML = "'.$currency.' " + number_format(th.innerHTML + (sum),"","",".") ;';
 		} else {
@@ -203,7 +203,7 @@ function number_format(number, decimals, dec_point, thousands_sep) {
 		} ?>
 		
 		var tables = document.getElementsByTagName('tbody');
-    var table = tables[tables.length -1];
+    var table = document.querySelector('#dataTable tbody');
     var rows = table.rows;
     for(var i = 0, td; i < rows.length; i++){
         td = document.createElement('td');
@@ -222,7 +222,7 @@ $(document).ready(function(){
 });
 </script>
 <div class="row">
-<div class="col-12">
+<div class="col-8">
 <div class="card">
 <div class="card-header">
 	<h3><i class=" fa fa-money"></i> <?= $_selling_report ?> <?= ucfirst($idhr) . ucfirst(substr($idbl,0,3).' '.substr($idbl,3,5));	if ($prefix != "") {echo " prefix [" . $prefix . "]";} ?> <small id="loader" style="display: none;" ><i><i class='fa fa-circle-o-notch fa-spin'></i> <?= $_processing ?> </i></small></h3>
@@ -350,10 +350,26 @@ $(document).ready(function(){
 				</thead>
 				<tbody>
 				<?php
+			$rekapProfile = array();
+			$rekapComment = array();
+			$rekapTotal = 0;
+			$rekapCommentTotal = 0;
 			if ($prefix != "") {
 				for ($i = 0; $i < $TotalReg; $i++) {
 					$getname = explode("-|-", $getData[$i]['name']);
 					if (substr($getname[2], 0, strlen($prefix)) == $prefix) {
+						$pNum = floatval(isset($getname[3]) ? $getname[3] : 0);
+						$pKey = trim(isset($getname[7]) ? $getname[7] : '-');
+						if ($pKey === '') $pKey = '-';
+						$cKey = trim(isset($getname[8]) ? $getname[8] : '');
+						if (!isset($rekapProfile[$pKey])) $rekapProfile[$pKey] = 0;
+						$rekapProfile[$pKey] += $pNum;
+						if ($cKey !== '' && (strtolower(substr($cKey,0,2)) === 'vc' || strtolower(substr($cKey,0,2)) === 'up')) {
+							if (!isset($rekapComment[$cKey])) $rekapComment[$cKey] = 0;
+							$rekapComment[$cKey] += $pNum;
+							$rekapCommentTotal += $pNum;
+						}
+						$rekapTotal += $pNum;
 						echo "<tr>";
 						echo "<td>";
 						$tgl = $getname[0];
@@ -385,6 +401,18 @@ $(document).ready(function(){
 			} else {
 				for ($i = 0; $i < $TotalReg; $i++) {
 					$getname = explode("-|-", $getData[$i]['name']);
+					$pNum = floatval(isset($getname[3]) ? $getname[3] : 0);
+					$pKey = trim(isset($getname[7]) ? $getname[7] : '-');
+					if ($pKey === '') $pKey = '-';
+					$cKey = trim(isset($getname[8]) ? $getname[8] : '');
+					if (!isset($rekapProfile[$pKey])) $rekapProfile[$pKey] = 0;
+					$rekapProfile[$pKey] += $pNum;
+					if ($cKey !== '' && (strtolower(substr($cKey,0,2)) === 'vc' || strtolower(substr($cKey,0,2)) === 'up')) {
+						if (!isset($rekapComment[$cKey])) $rekapComment[$cKey] = 0;
+						$rekapComment[$cKey] += $pNum;
+						$rekapCommentTotal += $pNum;
+					}
+					$rekapTotal += $pNum;
 					echo "<tr>";
 					echo "<td>";
 					$tgl = $getname[0];
@@ -419,13 +447,108 @@ $(document).ready(function(){
 				}
 					
 			}
-
+			arsort($rekapProfile);
+			arsort($rekapComment);
 			?>
 			</tbody>
 			</table>
 		</div>
 </div>
 </div>
+</div>
+</div>
+<div class="col-4">
+	<div class="card">
+		<div class="card-header">
+			<h3><i class="fa fa-bar-chart"></i> Recap Per <?= $_profile ?></h3>
+		</div>
+		<div class="card-body">
+			<div class="overflow box-bordered" style="max-height: 32vh;">
+				<table class="table table-bordered table-hover text-nowrap">
+					<thead class="thead-light">
+					<tr>
+						<th style="width:40px;">No</th>
+						<th><?= $_profile ?></th>
+						<th style="text-align:right;"><?= $_total ?></th>
+					</tr>
+					</thead>
+					<tbody>
+					<?php
+					$no = 1;
+					foreach ($rekapProfile as $rpKey => $rpVal) {
+						echo "<tr>";
+						echo "<td>".$no."</td>";
+						echo "<td>".htmlspecialchars($rpKey)."</td>";
+						if ($currency == in_array($currency, $cekindo['indo'])) {
+							echo "<td style='text-align:right;'>".number_format($rpVal, 0, ",", ".")."</td>";
+						} else {
+							echo "<td style='text-align:right;'>".number_format($rpVal, 2, ".", ",")."</td>";
+						}
+						echo "</tr>";
+						$no++;
+					}
+					?>
+					<tr>
+						<td colspan="2" style="text-align:right;"><b><?= $_total ?></b></td>
+						<td style="text-align:right;"><b><?php
+							if ($currency == in_array($currency, $cekindo['indo'])) {
+								echo number_format($rekapTotal, 0, ",", ".");
+							} else {
+								echo number_format($rekapTotal, 2, ".", ",");
+							}
+						?></b></td>
+					</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+	<div class="card">
+		<div class="card-header">
+			<h3><i class="fa fa-bar-chart"></i> Recap Per <?= $_comment ?> (Voucher Already Logged In)</h3>
+		</div>
+		<div class="card-body">
+			<div class="overflow box-bordered" style="max-height: 32vh;">
+				<table class="table table-bordered table-hover text-nowrap">
+					<thead class="thead-light">
+					<tr>
+						<th style="width:40px;">No</th>
+						<th><?= $_comment ?> Voucher</th>
+						<th style="text-align:right;"><?= $_total ?></th>
+					</tr>
+					</thead>
+					<tbody>
+					<?php
+					$no = 1;
+					foreach ($rekapComment as $rcKey => $rcVal) {
+						echo "<tr>";
+						echo "<td>".$no."</td>";
+						echo "<td>".htmlspecialchars($rcKey)."</td>";
+						if ($currency == in_array($currency, $cekindo['indo'])) {
+							echo "<td style='text-align:right;'>".number_format($rcVal, 0, ",", ".")."</td>";
+						} else {
+							echo "<td style='text-align:right;'>".number_format($rcVal, 2, ".", ",")."</td>";
+						}
+						echo "</tr>";
+						$no++;
+					}
+					?>
+					<tr>
+						<td colspan="2" style="text-align:right;"><b><?= $_total ?></b></td>
+						<td style="text-align:right;"><b><?php
+							if ($currency == in_array($currency, $cekindo['indo'])) {
+								echo number_format($rekapCommentTotal, 0, ",", ".");
+							} else {
+								echo number_format($rekapCommentTotal, 2, ".", ",");
+							}
+						?></b></td>
+					</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
 </div>
 
 <!-- Modal -->
