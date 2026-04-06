@@ -18,44 +18,124 @@
 session_start();
 // hide all error
 error_reporting(0);
+ignore_user_abort(true);
+ini_set('max_execution_time', 0);
+if (function_exists('set_time_limit')) {
+	@set_time_limit(0);
+}
+
+function mikhmon_get_rows_by_name($rows) {
+	$rowsByName = array();
+
+	if (!is_array($rows)) {
+		return $rowsByName;
+	}
+
+	foreach ($rows as $row) {
+		if (!isset($row['name']) || $row['name'] == '') {
+			continue;
+		}
+
+		$rowName = $row['name'];
+		if (!isset($rowsByName[$rowName])) {
+			$rowsByName[$rowName] = array();
+		}
+
+		$rowsByName[$rowName][] = $row;
+	}
+
+	return $rowsByName;
+}
+
+function mikhmon_reconnect_api($API) {
+	global $iphost, $userhost, $passwdhost;
+
+	if (!isset($API)) {
+		return false;
+	}
+
+	$API->disconnect();
+	$API->debug = false;
+	$API->attempts = 2;
+	$API->delay = 1;
+
+	return $API->connect($iphost, $userhost, decrypt($passwdhost));
+}
+
+function mikhmon_remove_hotspot_related_rows($API, $users) {
+	if (!is_array($users) || count($users) === 0) {
+		return;
+	}
+
+	$scriptRowsByName = mikhmon_get_rows_by_name($API->comm('/system/script/print', array(
+		'.proplist' => '.id,name',
+	)));
+	$schedulerRowsByName = mikhmon_get_rows_by_name($API->comm('/system/scheduler/print', array(
+		'.proplist' => '.id,name',
+	)));
+	$handledNames = array();
+
+	foreach ($users as $index => $user) {
+		if ($index > 0 && $index % 25 === 0) {
+			if (!mikhmon_reconnect_api($API)) {
+				break;
+			}
+		}
+
+		$userName = isset($user['name']) ? $user['name'] : '';
+		if ($userName != '' && !isset($handledNames[$userName])) {
+			if (isset($scriptRowsByName[$userName])) {
+				foreach ($scriptRowsByName[$userName] as $scriptRow) {
+					if (isset($scriptRow['.id'])) {
+						$API->comm('/system/script/remove', array(
+							'.id' => $scriptRow['.id'],
+						));
+					}
+				}
+			}
+
+			if (isset($schedulerRowsByName[$userName])) {
+				foreach ($schedulerRowsByName[$userName] as $schedulerRow) {
+					if (isset($schedulerRow['.id'])) {
+						$API->comm('/system/scheduler/remove', array(
+							'.id' => $schedulerRow['.id'],
+						));
+					}
+				}
+			}
+
+			$handledNames[$userName] = true;
+		}
+
+		if (isset($user['.id']) && $user['.id'] != '') {
+			$API->comm('/ip/hotspot/user/remove', array(
+				'.id' => $user['.id'],
+			));
+		}
+	}
+}
+
 if ($removehotspotusers != "") {
 	$uids = explode("~", $removehotspotusers);
-
-	$nuids = count($uids);
-
-	for ($i = 0; $i < $nuids; $i++) {
-
-		$getuname = $API->comm("/ip/hotspot/user/print", array(
-			"?.id" => "$uids[$i]",
-		));
-
-		$name = $getuname[0]['name'];
-
-		$getscr = $API->comm("/system/script/print", array(
-			"?name" => "$name",
-		));
-
-		$scr = $getscr[0]['.id'];
-
-		$getsch = $API->comm("/system/scheduler/print", array(
-			"?name" => "$name",
-		));
-
-		$sch = $getsch[0]['.id'];
-
-		$API->comm("/system/script/remove", array(
-			".id" => "$scr",
-		));
-
-		$API->comm("/system/scheduler/remove", array(
-			".id" => "$sch",
-		));
-
-		$API->comm("/ip/hotspot/user/remove", array(
-			".id" => "$uids[$i]",
-		));
-
+	$allUsers = $API->comm('/ip/hotspot/user/print', array(
+		'.proplist' => '.id,name',
+	));
+	$usersById = array();
+	foreach ($allUsers as $userRow) {
+		if (isset($userRow['.id']) && $userRow['.id'] != '') {
+			$usersById[$userRow['.id']] = $userRow;
+		}
 	}
+
+	$usersToRemove = array();
+	$nuids = count($uids);
+	for ($i = 0; $i < $nuids; $i++) {
+		if (isset($usersById[$uids[$i]])) {
+			$usersToRemove[] = $usersById[$uids[$i]];
+		}
+	}
+
+	mikhmon_remove_hotspot_related_rows($API, $usersToRemove);
 
 	if ($_SESSION['ubp'] != "") {
 		echo "<script>window.location='./?hotspot=users&profile=" . $_SESSION['ubp'] . "&session=" . $session . "'</script>";
@@ -70,34 +150,12 @@ if ($removehotspotusers != "") {
 
 } else {
 	$getuname = $API->comm("/ip/hotspot/user/print", array(
+		".proplist" => ".id,name",
 		"?.id" => "$removehotspotuser",
 	));
-
-	$name = $getuname[0]['name'];
-
-	$getscr = $API->comm("/system/script/print", array(
-		"?name" => "$name",
-	));
-
-	$scr = $getscr[0]['.id'];
-
-	$getsch = $API->comm("/system/scheduler/print", array(
-		"?name" => "$name",
-	));
-
-	$sch = $getsch[0]['.id'];
-
-	$API->comm("/system/script/remove", array(
-		".id" => "$scr",
-	));
-
-	$API->comm("/system/scheduler/remove", array(
-		".id" => "$sch",
-	));
-
-	$API->comm("/ip/hotspot/user/remove", array(
-		".id" => "$removehotspotuser",
-	));
+	if (is_array($getuname) && isset($getuname[0])) {
+		mikhmon_remove_hotspot_related_rows($API, array($getuname[0]));
+	}
 
 
 	if ($_SESSION['ubp'] != "") {
