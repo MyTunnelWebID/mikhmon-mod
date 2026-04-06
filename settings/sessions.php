@@ -24,6 +24,12 @@ if (!isset($_SESSION["mikhmon"])) {
 
 // array color
   $color = array('1' => 'bg-blue', 'bg-indigo', 'bg-purple', 'bg-pink', 'bg-red', 'bg-yellow', 'bg-green', 'bg-teal', 'bg-cyan', 'bg-grey', 'bg-light-blue');
+  $configNotice = '';
+
+  if (isset($_SESSION['admin_notice']) && $_SESSION['admin_notice'] != '') {
+    $configNotice = $_SESSION['admin_notice'];
+    unset($_SESSION['admin_notice']);
+  }
 
   if (isset($_POST['save'])) {
 
@@ -51,6 +57,40 @@ if (!isset($_SESSION["mikhmon"])) {
     echo "<script>window.location='./admin.php?id=sessions'</script>";
   }
 
+  if (isset($_POST['uploadconfig'])) {
+    if (!isset($_FILES['UploadConfig']) || $_FILES['UploadConfig']['error'] != UPLOAD_ERR_OK) {
+      $configNotice = '<div class="box bg-danger">Alert!<br>Failed to upload config file.</div>';
+    } else {
+      $configName = basename($_FILES['UploadConfig']['name']);
+      $configType = strtolower(pathinfo($configName, PATHINFO_EXTENSION));
+      $configSize = (int) $_FILES['UploadConfig']['size'];
+      $uploadedContent = file_get_contents($_FILES['UploadConfig']['tmp_name']);
+
+      if ($configType != 'php') {
+        $configNotice = '<div class="box bg-danger">Alert!<br>Only .php config files are allowed.</div>';
+      } elseif ($configSize > 2000000) {
+        $configNotice = '<div class="box bg-danger">Alert!<br>Config file is too large.</div>';
+      } elseif ($uploadedContent === false || trim($uploadedContent) == '') {
+        $configNotice = '<div class="box bg-danger">Alert!<br>Config file is empty or unreadable.</div>';
+      } else {
+        $uploadedContent = preg_replace('/^\xEF\xBB\xBF/', '', $uploadedContent);
+        $trimmedConfig = ltrim($uploadedContent);
+
+        if (strpos($trimmedConfig, '<?php') !== 0) {
+          $configNotice = '<div class="box bg-danger">Alert!<br>Invalid config format.</div>';
+        } elseif (strpos($uploadedContent, "\$data['mikhmon']") === false && strpos($uploadedContent, '$data["mikhmon"]') === false) {
+          $configNotice = '<div class="box bg-danger">Alert!<br>Uploaded file is not a valid Mikhmon config.</div>';
+        } elseif (file_put_contents('./include/config.php', $uploadedContent) === false) {
+          $configNotice = '<div class="box bg-danger">Alert!<br>Unable to save uploaded config.</div>';
+        } else {
+          $_SESSION['admin_notice'] = '<div class="box bg-success">Alert!<br>Config file uploaded successfully.</div>';
+          echo "<script>window.location='./admin.php?id=sessions'</script>";
+          exit;
+        }
+      }
+    }
+  }
+
 }
 ?>
 <script>
@@ -70,6 +110,7 @@ if (!isset($_SESSION["mikhmon"])) {
   			<h3 class="card-title"><i class="fa fa-gear"></i> <?= $_admin_settings ?> &nbsp; | &nbsp;&nbsp;<i onclick="location.reload();" class="fa fa-refresh pointer " title="Reload data"></i></h3>
   		</div>
       <div class="card-body">
+          <?= $configNotice; ?>
         <div class="row">
           
           <div class="col-6">
@@ -81,10 +122,7 @@ if (!isset($_SESSION["mikhmon"])) {
             <div class="card-body">
             <div class="row">
               <?php
-              foreach (file('./include/config.php') as $line) {
-                $value = explode("'", $line)[1];
-                if ($value == "" || $value == "mikhmon") {
-                } else { ?>
+              foreach (mikhmon_get_router_keys($data) as $value) { ?>
                     <div class="col-12">
                         <div class="box bmh-75 box-bordered <?= $color[rand(1, 11)]; ?>">
                                 <div class="box-group">
@@ -111,7 +149,6 @@ if (!isset($_SESSION["mikhmon"])) {
                             </div>
                           </div>
                           <?php
-                              }
                             }
                             ?>
                     </div>
@@ -174,6 +211,28 @@ if (!isset($_SESSION["mikhmon"])) {
     </div>
     </div>
     </form>
+
+          <div class="card">
+              <div class="card-header">
+                <h3 class="card-title"><i class="fa fa-download"></i> <?= $_backup_restore_config ?></h3>
+              </div>
+            <div class="card-body">
+              <div class="mr-b-10">
+                <a class="btn bg-blue" href="./admin.php?id=download-config"><i class="fa fa-download"></i> <?= $_download_backup ?></a>
+              </div>
+              <form autocomplete="off" method="post" action="" enctype="multipart/form-data">
+                <div class="pd-b-10"><?= $_config_file ?> : include/config.php</div>
+                <div class="input-group">
+                  <div class="input-group-4 col-box-8">
+                    <input style="cursor: pointer;" type="file" class="group-item group-item-l" name="UploadConfig" accept=".php" required="1">
+                  </div>
+                  <div class="input-group-2 col-box-4">
+                    <input style="cursor: pointer; font-size: 14px; padding:8px;" class="group-item group-item-r" type="submit" value="<?= $_upload_config ?>" title="Upload config" name="uploadconfig">
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
     
           <!-- Adverstisment -->
           <div class="card">
@@ -195,13 +254,7 @@ if (!isset($_SESSION["mikhmon"])) {
                       VPN Masking : Mulai dari Rp 2.000/bln
                     </li>
                     <li>
-                      VPN Traffic : Mulai dari Rp 10.000/bln
-                    </li>
-                    <li>
-                      VPN Interkoneksi : Mulai dari Rp 2.000/bln
-                    </li>
-                    <li>
-                      Mikhmon Online : Mulai dari Rp 5.000/bln
+                      Mikhmon Online : Mulai dari Rp 15.000/bln
                     </li>
                   </ul>
                 </p>

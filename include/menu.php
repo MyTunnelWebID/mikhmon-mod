@@ -133,6 +133,16 @@ if (!isset($_SESSION["mikhmon"])) {
   } elseif ($hotspot == "users-by-profile") {
     $susersbp = "active";
     $mpage = $_vouchers;
+  } elseif ($hotspot == "agent-reseller") {
+    $sagentreseller = "active";
+    $sagentmember = "active";
+    $armenu = "menu-open";
+    $mpage = $_agent_member;
+  } elseif ($report == "agent-reseller") {
+    $sagentreseller = "active";
+    $sagentreport = "active";
+    $armenu = "menu-open";
+    $mpage = $_agent_report;
   } elseif ($userbyname != "") {
     $mpage = $_users;
     $susers = "active";
@@ -266,15 +276,11 @@ include('./info.php');
   <select class="connect optfa ses text-right mr-t-10 pd-5">
     <option id="MikhmonSession" value="<?= $session; ?>"><?= $hotspotname; ?></option>
       <?php
-      foreach (file('./include/config.php') as $line) {
-        $sesname = explode("'", $line)[1];
-        if ($sesname == "" || $sesname== "mikhmon") {
-        } else {
+      foreach (mikhmon_get_router_keys($data) as $sesname) {
         if($sesname == $session){
           echo '<option value="' . $sesname. '">'.$sesname. ' &#x2666;</option>';
         }else{
           echo '<option value="' . $sesname. '">'.$sesname. '</option>';
-        }
         }
       }
       ?>
@@ -334,6 +340,13 @@ include('./info.php');
   <a href="./?hotspot=quick-print&session=<?= $session; ?>" class="menu <?= $squick; ?>"> <i class="fa fa-print"></i> <?= $_quick_print ?> </a>
   <!--vouchers-->
   <a href="./?hotspot=users-by-profile&session=<?= $session; ?>" class="menu <?= $susersbp; ?>"> <i class="fa fa-ticket"></i> <?= $_vouchers ?> </a>
+  <div class="dropdown-btn <?= $sagentreseller; ?>"><i class="fa fa-users"></i> <?= $_agent_reseller ?>
+    <i class="fa fa-caret-down"></i>
+  </div>
+  <div class="dropdown-container <?= $armenu; ?>">
+    <a href="./?hotspot=agent-reseller&session=<?= $session; ?>" class="<?= $sagentmember; ?>"> &nbsp;&nbsp;&nbsp;<i class="fa fa-list"></i> <?= $_member ?> </a>
+    <a href="./?report=agent-reseller&idbl=<?= strtolower(date("M")) . date("Y"); ?>&session=<?= $session; ?>" class="<?= $sagentreport; ?>"> &nbsp;&nbsp;&nbsp;<i class="fa fa-bar-chart"></i> <?= $_report ?> </a>
+  </div>
    <!--log-->
   <div class="dropdown-btn <?= $log; ?>"><i class=" fa fa-align-justify"></i> <?= $_log ?>
     <i class="fa fa-caret-down"></i>

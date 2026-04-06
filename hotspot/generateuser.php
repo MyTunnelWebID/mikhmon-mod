@@ -27,6 +27,8 @@ if (!isset($_SESSION["mikhmon"])) {
 // time zone
 date_default_timezone_set($_SESSION['timezone']);
 
+	$agentResellerOptions = mikhmon_get_enabled_agent_resellers($agentreseller, $session);
+
 	$genprof = $_GET['genprof'];
 	if ($genprof != "") {
 		$getprofile = $API->comm("/ip/hotspot/user/profile/print", array(
@@ -69,6 +71,11 @@ date_default_timezone_set($_SESSION['timezone']);
 		$prefix = ($_POST['prefix']);
 		$char = ($_POST['char']);
 		$profile = ($_POST['profile']);
+		$selectedAgent = mikhmon_sanitize_key($_POST['agentreseller']);
+		if ($selectedAgent != '' && !isset($agentResellerOptions[$selectedAgent])) {
+			$selectedAgent = '';
+		}
+		$selectedAgentCommission = $selectedAgent != '' && isset($agentResellerOptions[$selectedAgent]) ? $agentResellerOptions[$selectedAgent]['commission'] : '';
 		$timelimit = ($_POST['timelimit']);
 		$datalimit = ($_POST['datalimit']);
 		$adcomment = ($_POST['adcomment']);
@@ -95,8 +102,12 @@ date_default_timezone_set($_SESSION['timezone']);
 		$getsprice = explode(",", $ponlogin)[4];
 		$getlock = explode(",", $ponlogin)[6];
 		$_SESSION['ubp'] = $profile;
+		$agentMarker = mikhmon_build_agent_marker($selectedAgent, $selectedAgentCommission);
 		$commt = $user . "-" . rand(100, 999) . "-" . date("m.d.y") . "-" . $adcomment;
-		$gentemp = $commt . "|~" . $profile . "~" . $getvalid . "~" . $getprice . "!".$getsprice."~" . $timelimit . "~" . $datalimit . "~" . $getlock;
+		if ($agentMarker != "") {
+			$commt = trim($commt . " " . $agentMarker);
+		}
+		$gentemp = $commt . "|~" . $profile . "~" . $getvalid . "~" . $getprice . "!".$getsprice."~" . $timelimit . "~" . $datalimit . "~" . $getlock . "~" . $selectedAgent;
 		$gen = '<?php $genu="'.encrypt($gentemp).'";?>';
 		$temp = './voucher/temp.php';
 		$handle = fopen($temp, 'w') or die('Cannot open file:  ' . $temp);
@@ -133,7 +144,6 @@ date_default_timezone_set($_SESSION['timezone']);
 				} elseif ($userl == 8) {
 					$p[$i] = randN(8);
 				}
-
 				$u[$i] = "$prefix$u[$i]";
 			}
 
@@ -147,6 +157,16 @@ date_default_timezone_set($_SESSION['timezone']);
 					"limit-bytes-total" => "$datalimit",
 					"comment" => "$commt",
 				));
+				// Progress loader dan flush setiap 10 voucher
+				if ($i % 10 == 0) {
+					echo "<script>document.getElementById('loader').style.display='inline';</script>";
+					flush();
+					if (function_exists('ob_flush')) ob_flush();
+				}
+				// Sleep setiap 50 voucher untuk throttle
+				if ($i % 50 == 0) {
+					sleep(1);
+				}
 			}
 		}
 
@@ -169,9 +189,7 @@ date_default_timezone_set($_SESSION['timezone']);
 				} elseif ($userl == 8) {
 					$p[$i] = randN(4);
 				}
-
 				$u[$i] = "$prefix$u[$i]$p[$i]";
-
 				if ($char == "num") {
 					if ($userl == 3) {
 						$p[$i] = randN(3);
@@ -186,28 +204,20 @@ date_default_timezone_set($_SESSION['timezone']);
 					} elseif ($userl == 8) {
 						$p[$i] = randN(8);
 					}
-
 					$u[$i] = "$prefix$p[$i]";
 				}
 				if ($char == "mix") {
 					$p[$i] = randNLC($userl);
-
-
 					$u[$i] = "$prefix$p[$i]";
 				}
 				if ($char == "mix1") {
 					$p[$i] = randNUC($userl);
-
-
 					$u[$i] = "$prefix$p[$i]";
 				}
 				if ($char == "mix2") {
 					$p[$i] = randNULC($userl);
-
-
 					$u[$i] = "$prefix$p[$i]";
 				}
-
 			}
 			for ($i = 1; $i <= $qty; $i++) {
 				$API->comm("/ip/hotspot/user/add", array(
@@ -219,6 +229,16 @@ date_default_timezone_set($_SESSION['timezone']);
 					"limit-bytes-total" => "$datalimit",
 					"comment" => "$commt",
 				));
+				// Progress loader dan flush setiap 10 voucher
+				if ($i % 10 == 0) {
+					echo "<script>document.getElementById('loader').style.display='inline';</script>";
+					flush();
+					if (function_exists('ob_flush')) ob_flush();
+				}
+				// Sleep setiap 50 voucher untuk throttle
+				if ($i % 50 == 0) {
+					sleep(1);
+				}
 			}
 		}
 
@@ -270,6 +290,13 @@ date_default_timezone_set($_SESSION['timezone']);
 		$udlimit = formatBytes($udlimit, 2);
 	}
 	$ulock = $genuser1[6];
+	$uagent = isset($genuser1[7]) ? $genuser1[7] : "";
+	if ($uagent != "") {
+		$uagentItem = mikhmon_get_agent_reseller_item($agentreseller, $session, $uagent);
+		if ($uagentItem['name'] != '') {
+			$uagent = $uagentItem['code'] . ' - ' . $uagentItem['name'];
+		}
+	}
 	//$urlprint = "$umode-$ucode-$udate-$ucommt";
 	$urlprint = explode("|", decrypt($genu))[0];
 	if ($currency == in_array($currency, $cekindo['indo'])) {
@@ -391,6 +418,16 @@ date_default_timezone_set($_SESSION['timezone']);
 		</td>
 	</tr>
 	<tr>
+		<td class="align-middle"><?= $_agent_reseller ?></td><td>
+			<select class="form-control" name="agentreseller">
+				<option value=""><?= $_optional ?></option>
+				<?php foreach ($agentResellerOptions as $agentKey => $agentItem) {
+					echo '<option value="' . $agentKey . '">' . $agentItem['code'] . ' - ' . $agentItem['name'] . '</option>';
+				} ?>
+			</select>
+		</td>
+	</tr>
+	<tr>
     <td class="align-middle"><?= $_time_limit ?></td><td><input class="form-control " type="text" size="4" autocomplete="off" name="timelimit" value=""></td>
   </tr>
 	<tr>
@@ -440,6 +477,9 @@ date_default_timezone_set($_SESSION['timezone']);
   <tr>
   	<td><?= $_profile ?></td><td><?= $uprofile ?></td>
   </tr>
+	<tr>
+	<td><?= $_agent_reseller ?></td><td><?= $uagent == "" ? $_optional : $uagent ?></td>
+	</tr>
   <tr>
   	<td><?= $_validity ?></td><td><?= $uvalid ?></td>
   <tr>

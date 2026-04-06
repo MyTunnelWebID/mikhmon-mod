@@ -21,6 +21,7 @@ error_reporting(0);
 if (!isset($_SESSION["mikhmon"])) {
   header("Location:../admin.php?id=login");
 } else {
+  $agentResellerOptions = mikhmon_get_enabled_agent_resellers($agentreseller, $session);
 
   $getprofile = $API->comm("/ip/hotspot/user/profile/print");
   $srvlist = $API->comm("/ip/hotspot/print");
@@ -34,6 +35,11 @@ if (!isset($_SESSION["mikhmon"])) {
     $timelimit = ($_POST['timelimit']);
     $datalimit = ($_POST['datalimit']);
     $comment = ($_POST['comment']);
+    $selectedAgent = mikhmon_sanitize_key($_POST['agentreseller']);
+    if ($selectedAgent != '' && !isset($agentResellerOptions[$selectedAgent])) {
+      $selectedAgent = '';
+    }
+    $selectedAgentCommission = $selectedAgent != '' && isset($agentResellerOptions[$selectedAgent]) ? $agentResellerOptions[$selectedAgent]['commission'] : '';
     $chkvalid = ($_POST['valid']);
     $mbgb = ($_POST['mbgb']);
     if ($timelimit == "") {
@@ -51,8 +57,8 @@ if (!isset($_SESSION["mikhmon"])) {
     }else{
       $usermode = "up-";
     }
-    
-      $comment = $usermode.$comment;
+
+    $comment = mikhmon_append_agent_marker($usermode . $comment, $selectedAgent, $selectedAgentCommission);
     
     $API->comm("/ip/hotspot/user/add", array(
       "server" => "$server",
@@ -92,6 +98,8 @@ if (!isset($_SESSION["mikhmon"])) {
   <div>
   <?php if ($_SESSION['ubp'] != "") {
     echo "    <a class='btn bg-warning' href='./?hotspot=users&profile=" . $_SESSION['ubp'] . "&session=" . $session . "'> <i class='fa fa-close'></i> ".$_close."</a>";
+  } elseif ($_SESSION['uba'] != "") {
+    echo "    <a class='btn bg-warning' href='./?hotspot=users&agent=" . $_SESSION['uba'] . "&session=" . $session . "'> <i class='fa fa-close'></i> ".$_close."</a>";
   } else {
     echo "    <a class='btn bg-warning' href='./?hotspot=users&profile=all&session=" . $session . "'> <i class='fa fa-close'></i> ".$_close."</a>";
   }
@@ -141,6 +149,16 @@ if (!isset($_SESSION["mikhmon"])) {
 			</select>
 		</td>
 	</tr>
+  <tr>
+    <td class="align-middle"><?= $_agent_reseller ?></td><td>
+      <select class="form-control" name="agentreseller">
+        <option value=""><?= $_optional ?></option>
+        <?php foreach ($agentResellerOptions as $agentKey => $agentItem) {
+          echo '<option value="' . $agentKey . '">' . $agentItem['code'] . ' - ' . $agentItem['name'] . '</option>';
+        } ?>
+      </select>
+    </td>
+  </tr>
 	<tr>
     <td class="align-middle"><?= $_time_limit ?></td><td><input class="form-control" type="text"  autocomplete="off" name="timelimit" value=""></td>
   </tr>

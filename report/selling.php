@@ -41,34 +41,26 @@ if (!isset($_SESSION["mikhmon"])) {
 	$timezone = $gettimezone[0]['time-zone-name'];
 	date_default_timezone_set($timezone);
 
+	$allReportRows = $API->comm("/system/script/print", array(
+		"?comment" => "mikhmon",
+	));
+	if (!is_array($allReportRows)) {
+		$allReportRows = array();
+	}
+
 	if (isset($remdata)) {
-		if (strlen($idhr) > "0") {
-			if ($API->connect($iphost, $userhost, decrypt($passwdhost))) {
-				$API->write('/system/script/print', false);
-				$API->write('?source=' . $idhr . '', false);
-				$API->write('=.proplist=.id');
-				$ARREMD = $API->read();
-				for ($i = 0; $i < count($ARREMD); $i++) {
-					$API->write('/system/script/remove', false);
-					$API->write('=.id=' . $ARREMD[$i]['.id']);
-					$READ = $API->read();
-
-				}
-			}
-		} elseif (strlen($idbl) > "0") {
-			if ($API->connect($iphost, $userhost, decrypt($passwdhost))) {
-				$API->write('/system/script/print', false);
-				$API->write('?owner=' . $idbl . '', false);
-				$API->write('=.proplist=.id');
-				$ARREMD = $API->read();
-				for ($i = 0; $i < count($ARREMD); $i++) {
-					$API->write('/system/script/remove', false);
-					$API->write('=.id=' . $ARREMD[$i]['.id']);
-					$READ = $API->read();
-
-				}
+		foreach ($allReportRows as $reportRow) {
+			if (!mikhmon_match_report_period(mikhmon_get_report_row_date($reportRow), $idhr, $idbl)) {
+				continue;
 			}
 
+			if (!isset($reportRow['.id'])) {
+				continue;
+			}
+
+			$API->comm('/system/script/remove', array(
+				'.id' => $reportRow['.id'],
+			));
 		}
 		echo "<script>window.location='./?report=selling&session=" . $session . "'</script>";
 	}
@@ -78,43 +70,27 @@ if (!isset($_SESSION["mikhmon"])) {
 	} else {
 		$fprefix = "";
 	}
-	if (strlen($idhr) > "0") {
-		if ($API->connect($iphost, $userhost, decrypt($passwdhost))) {
-			$getData = $API->comm("/system/script/print", array(
-				"?source" => "$idhr",
-			));
-			$TotalReg = count($getData);
+	$getData = array();
+	foreach ($allReportRows as $reportRow) {
+		if (mikhmon_match_report_period(mikhmon_get_report_row_date($reportRow), $idhr, $idbl)) {
+			$getData[] = $reportRow;
 		}
+	}
+	$TotalReg = count($getData);
+
+	if (strlen($idhr) > "0") {
 		$filedownload = $idhr;
 		$shf = "hidden";
 		$shd = "inline-block";
 	} elseif (strlen($idbl) > "0") {
-		if ($API->connect($iphost, $userhost, decrypt($passwdhost))) {
-			$getData = $API->comm("/system/script/print", array(
-				"?owner" => "$idbl",
-			));
-			$TotalReg = count($getData);
-		}
 		$filedownload = $idbl;
 		$shf = "hidden";
 		$shd = "inline-block";
 	} elseif ($idhr == "" || $idbl == "") {
-		if ($API->connect($iphost, $userhost, decrypt($passwdhost))) {
-			$getData = $API->comm("/system/script/print", array(
-				"?comment" => "mikhmon",
-			));
-			$TotalReg = count($getData);
-		}
 		$filedownload = "all";
 		$shf = "text";
 		$shd = "none";
 	} elseif (strlen($idbl) > "0" ) {
-		if ($API->connect($iphost, $userhost, decrypt($passwdhost))) {
-			$getData = $API->comm("/system/script/print", array(
-				"?owner" => "$idbl",
-			));
-			$TotalReg = count($getData);
-		}
 		$filedownload = $idbl;
 		$shf = "hidden";
 		$shd = "inline-block";
@@ -361,10 +337,12 @@ $(document).ready(function(){
 						$pNum = floatval(isset($getname[3]) ? $getname[3] : 0);
 						$pKey = trim(isset($getname[7]) ? $getname[7] : '-');
 						if ($pKey === '') $pKey = '-';
-						$cKey = trim(isset($getname[8]) ? $getname[8] : '');
+						$commentRaw = trim(isset($getname[8]) ? $getname[8] : '');
+						$cKey = mikhmon_get_report_comment_code($commentRaw);
+						$commentDisplay = mikhmon_get_report_comment_label($commentRaw);
 						if (!isset($rekapProfile[$pKey])) $rekapProfile[$pKey] = 0;
 						$rekapProfile[$pKey] += $pNum;
-						if ($cKey !== '' && (strtolower(substr($cKey,0,2)) === 'vc' || strtolower(substr($cKey,0,2)) === 'up')) {
+						if ($cKey !== '') {
 							if (!isset($rekapComment[$cKey])) $rekapComment[$cKey] = 0;
 							$rekapComment[$cKey] += $pNum;
 							$rekapCommentTotal += $pNum;
@@ -388,8 +366,7 @@ $(document).ready(function(){
 						echo $profile;
 						echo "</td>";
 						echo "<td>";
-						$comment = $getname[8];
-						echo $comment;
+						echo htmlspecialchars($commentDisplay);
 						echo "</td>";
 						echo "<td style='text-align:right;'>";
 						$price = $getname[3];
@@ -404,10 +381,12 @@ $(document).ready(function(){
 					$pNum = floatval(isset($getname[3]) ? $getname[3] : 0);
 					$pKey = trim(isset($getname[7]) ? $getname[7] : '-');
 					if ($pKey === '') $pKey = '-';
-					$cKey = trim(isset($getname[8]) ? $getname[8] : '');
+					$commentRaw = trim(isset($getname[8]) ? $getname[8] : '');
+					$cKey = mikhmon_get_report_comment_code($commentRaw);
+					$commentDisplay = mikhmon_get_report_comment_label($commentRaw);
 					if (!isset($rekapProfile[$pKey])) $rekapProfile[$pKey] = 0;
 					$rekapProfile[$pKey] += $pNum;
-					if ($cKey !== '' && (strtolower(substr($cKey,0,2)) === 'vc' || strtolower(substr($cKey,0,2)) === 'up')) {
+					if ($cKey !== '') {
 						if (!isset($rekapComment[$cKey])) $rekapComment[$cKey] = 0;
 						$rekapComment[$cKey] += $pNum;
 						$rekapCommentTotal += $pNum;
@@ -431,12 +410,11 @@ $(document).ready(function(){
 					echo $profile;
 					echo "</td>";
 					echo "<td>";
-					$comment = $getname[8];
-					echo $comment;
+					echo htmlspecialchars($commentDisplay);
 					echo "</td>";
 					echo "<td style='text-align:right;'>";
 					$price = $getname[3];
-					echo $price;
+					echo $currency . ' ' . number_format((float)$price, 0, ',', '.');
 					echo "</td>";
 					echo "</tr>";
 				
@@ -480,9 +458,9 @@ $(document).ready(function(){
 						echo "<td>".$no."</td>";
 						echo "<td>".htmlspecialchars($rpKey)."</td>";
 						if ($currency == in_array($currency, $cekindo['indo'])) {
-							echo "<td style='text-align:right;'>".number_format($rpVal, 0, ",", ".")."</td>";
+							echo "<td style='text-align:right;'>".$currency . ' ' . number_format($rpVal, 0, ",", ".")."</td>";
 						} else {
-							echo "<td style='text-align:right;'>".number_format($rpVal, 2, ".", ",")."</td>";
+							echo "<td style='text-align:right;'>".$currency . ' ' . number_format($rpVal, 2, ".", ",")."</td>";
 						}
 						echo "</tr>";
 						$no++;
@@ -492,9 +470,9 @@ $(document).ready(function(){
 						<td colspan="2" style="text-align:right;"><b><?= $_total ?></b></td>
 						<td style="text-align:right;"><b><?php
 							if ($currency == in_array($currency, $cekindo['indo'])) {
-								echo number_format($rekapTotal, 0, ",", ".");
+								echo $currency . ' ' . number_format($rekapTotal, 0, ",", ".");
 							} else {
-								echo number_format($rekapTotal, 2, ".", ",");
+								echo $currency . ' ' . number_format($rekapTotal, 2, ".", ",");
 							}
 						?></b></td>
 					</tr>
@@ -526,9 +504,9 @@ $(document).ready(function(){
 						echo "<td>".$no."</td>";
 						echo "<td>".htmlspecialchars($rcKey)."</td>";
 						if ($currency == in_array($currency, $cekindo['indo'])) {
-							echo "<td style='text-align:right;'>".number_format($rcVal, 0, ",", ".")."</td>";
+							echo "<td style='text-align:right;'>".$currency . ' ' . number_format($rcVal, 0, ",", ".")."</td>";
 						} else {
-							echo "<td style='text-align:right;'>".number_format($rcVal, 2, ".", ",")."</td>";
+							echo "<td style='text-align:right;'>".$currency . ' ' . number_format($rcVal, 2, ".", ",")."</td>";
 						}
 						echo "</tr>";
 						$no++;
@@ -538,9 +516,9 @@ $(document).ready(function(){
 						<td colspan="2" style="text-align:right;"><b><?= $_total ?></b></td>
 						<td style="text-align:right;"><b><?php
 							if ($currency == in_array($currency, $cekindo['indo'])) {
-								echo number_format($rekapCommentTotal, 0, ",", ".");
+								echo $currency . ' ' . number_format($rekapCommentTotal, 0, ",", ".");
 							} else {
-								echo number_format($rekapCommentTotal, 2, ".", ",");
+								echo $currency . ' ' . number_format($rekapCommentTotal, 2, ".", ",");
 							}
 						?></b></td>
 					</tr>

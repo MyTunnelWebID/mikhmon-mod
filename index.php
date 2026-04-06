@@ -51,6 +51,7 @@ if (!isset($_SESSION["mikhmon"])) {
 
 // load config
   include('./include/config.php');
+  include('./include/config_helpers.php');
   include('./include/readcfg.php');
 
 // theme  
@@ -111,13 +112,14 @@ if (!isset($_SESSION["mikhmon"])) {
   $srv = $_GET['srv'];
   $prof = $_GET['profile'];
   $comm = $_GET['comment'];
+  $agent = $_GET['agent'];
   $serveractive = $_GET['server'];
   $report = $_GET['report'];
   $removereport = $_GET['remove-report'];
   $minterface = $_GET['interface'];
 
 
-  $pagehotspot = array('users','hosts','ipbinding','cookies','log','dhcp-leases');
+  $pagehotspot = array('users','hosts','ipbinding','cookies','log','dhcp-leases','agent-reseller');
   $pageppp = array('secrets','profiles','active',);
   $pagereport = array('userlog','selling');
 
@@ -166,6 +168,11 @@ if (!isset($_SESSION["mikhmon"])) {
     include_once('./report/userlog.php');
   }
 
+// agent reseller report
+  elseif ($report == "agent-reseller") {
+    include_once('./report/agentreseller.php');
+  }
+
 // about
   elseif ($hotspot == "about") {
     include_once('./include/about.php');
@@ -184,9 +191,20 @@ if (!isset($_SESSION["mikhmon"])) {
     include_once('./hotspot/adduser.php');
   }
 
+// hotspot users filter by agent reseller
+  elseif ($hotspot == "users" && $agent != "") {
+    $_SESSION['uba'] = mikhmon_sanitize_key($agent);
+    $_SESSION['ubp'] = "";
+    $_SESSION['hua'] = "";
+    $_SESSION['ubc'] = "";
+    $_SESSION['vcr'] = "";
+    include_once('./hotspot/users.php');
+  }
+
 // hotspot users
   elseif ($hotspot == "users" && $prof == "all") {
     $_SESSION['ubp'] = "";
+    $_SESSION['uba'] = "";
     $_SESSION['hua'] = "";
     $_SESSION['ubc'] = "";
     $_SESSION['vcr'] = "";
@@ -196,6 +214,7 @@ if (!isset($_SESSION["mikhmon"])) {
 // hotspot users filter by profile
   elseif ($hotspot == "users" && $prof != "") {
     $_SESSION['ubp'] = $prof;
+    $_SESSION['uba'] = "";
     $_SESSION['hua'] = "";
     $_SESSION['ubc'] = "";
     $_SESSION['vcr'] = "";
@@ -205,6 +224,7 @@ if (!isset($_SESSION["mikhmon"])) {
 // hotspot users filter by comment
   elseif ($hotspot == "users" && $comm != "") {
     $_SESSION['ubc'] = $comm;
+    $_SESSION['uba'] = "";
     $_SESSION['hua'] = "";
     $_SESSION['ubp'] = "";
     $_SESSION['vcr'] = "";
@@ -214,10 +234,16 @@ if (!isset($_SESSION["mikhmon"])) {
 // hotspot by profile
   elseif ($hotspot == "users-by-profile") {
     $_SESSION['ubp'] = "";
+    $_SESSION['uba'] = "";
     $_SESSION['hua'] = "";
     $_SESSION['ubc'] = "";
     $_SESSION['vcr'] = "active";
     include_once('./hotspot/userbyprofile.php');
+  }
+
+// agent reseller by router session
+  elseif ($hotspot == "agent-reseller") {
+    include_once('./hotspot/agentreseller.php');
   }
 // export hotspot users
   elseif ($hotspot == "export-users") {

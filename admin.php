@@ -61,6 +61,7 @@ if ($_SESSION['theme'] == "") {
 // load config
 include_once('./include/headhtml.php');
 include('./include/config.php');
+include('./include/config_helpers.php');
 include('./include/readcfg.php');
 
 include_once('./lib/routeros_api.class.php');
@@ -90,6 +91,21 @@ if ($id == "login" || substr($url, -1) == "p") {
 } elseif (substr($url, -1) == "/" || substr($url, -4) == ".php") {
   echo "<script>window.location='./admin.php?id=sessions'</script>";
 
+} elseif ($id == "download-config") {
+  if (!is_file("./include/config.php")) {
+    echo "<script>alert('Config file not found.');window.location='./admin.php?id=sessions'</script>";
+  } else {
+    $backupFileName = "mikhmon-config-" . date("Ymd-His") . ".php";
+    while (ob_get_level() > 0) {
+      ob_end_clean();
+    }
+    header("Content-Description: File Transfer");
+    header("Content-Type: application/octet-stream");
+    header("Content-Disposition: attachment; filename=\"" . $backupFileName . "\"");
+    header("Content-Length: " . filesize("./include/config.php"));
+    readfile("./include/config.php");
+    exit;
+  }
 } elseif ($id == "sessions") {
   $_SESSION["connect"] = "";
   include_once('./include/menu.php');
@@ -113,6 +129,8 @@ if ($id == "login" || substr($url, -1) == "p") {
         return false;
     };
     </script>';
+} elseif ($id == "agent-reseller") {
+  echo "<script>alert('Menu Agent Reseller sekarang ada di dalam session router.');window.location='./admin.php?id=sessions'</script>";
 } elseif ($id == "connect"  && !empty($session)) {
   ini_set("max_execution_time",5);  
   include_once('./include/menu.php');

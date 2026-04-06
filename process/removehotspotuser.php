@@ -59,6 +59,8 @@ if ($removehotspotusers != "") {
 
 	if ($_SESSION['ubp'] != "") {
 		echo "<script>window.location='./?hotspot=users&profile=" . $_SESSION['ubp'] . "&session=" . $session . "'</script>";
+	} elseif ($_SESSION['uba'] != "") {
+		echo "<script>window.location='./?hotspot=users&agent=" . $_SESSION['uba'] . "&session=" . $session . "'</script>";
 	} elseif ($_SESSION['ubc'] != "") {
 		echo "<script>window.location='./?hotspot=users&comment=" . $_SESSION['ubc'] . "&session=" . $session . "'</script>";
 	} else {
@@ -100,6 +102,8 @@ if ($removehotspotusers != "") {
 
 	if ($_SESSION['ubp'] != "") {
 		echo "<script>window.location='./?hotspot=users&profile=" . $_SESSION['ubp'] . "&session=" . $session . "'</script>";
+	} elseif ($_SESSION['uba'] != "") {
+		echo "<script>window.location='./?hotspot=users&agent=" . $_SESSION['uba'] . "&session=" . $session . "'</script>";
 	} elseif ($_SESSION['ubc'] != "") {
 		echo "<script>window.location='./?hotspot=users&comment=" . $_SESSION['ubc'] . "&session=" . $session . "'</script>";
 	} else {

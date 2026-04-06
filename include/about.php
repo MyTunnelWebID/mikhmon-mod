@@ -87,7 +87,7 @@ if (!isset($_SESSION["mikhmon"])) {
   <div class="col-12">
     <div class="card">
       <div class="card-header">
-        <h3><i class="fa fa-info-circle"></i> About Mod</h3>
+        <h3><i class="fa fa-info-circle"></i> About Modder</h3>
       </div>
       <div class="card-body">
         <h3>MIKHMON MOD V<?= $_SESSION['vm']; ?></h3>
@@ -115,7 +115,7 @@ if (!isset($_SESSION["mikhmon"])) {
   </ul>
 </p>
 <p>
-  Terima kasih untuk semua yang telah mendukung pengembangan MIKHMON.
+  Terima kasih untuk semua yang telah mendukung pengembangan MIKHMON MOD.
 </p>
 <div>
     <i>Copyright &copy; <i> <?= $_SESSION['copyright-mod']; ?></i></i>

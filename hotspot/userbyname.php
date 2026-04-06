@@ -55,6 +55,24 @@ if (!isset($_SESSION["mikhmon"])) {
   $ubytesout = $userdetails['bytes-out'];
   $ubytesin = $userdetails['bytes-in'];
   $ucomment = $userdetails['comment'];
+  $uagentcode = mikhmon_parse_agent_marker($ucomment);
+  $uagentcommissionrule = mikhmon_parse_agent_commission_rule($ucomment);
+  if ($uagentcode == '') {
+    $agentLogRows = $API->comm("/system/script/print", array(
+      "?comment" => "mikhmon",
+    ));
+    $uagentcode = mikhmon_find_agent_marker_by_username($agentLogRows, $uname);
+  }
+  $ucomment = mikhmon_strip_agent_marker($ucomment);
+  $agentResellerOptions = mikhmon_get_enabled_agent_resellers($agentreseller, $session);
+  $selectedAgentOptions = $agentResellerOptions;
+  $currentAgentItem = mikhmon_get_agent_reseller_item($agentreseller, $session, $uagentcode);
+  if ($uagentcode != '' && !isset($selectedAgentOptions[$uagentcode]) && $currentAgentItem['code'] != '') {
+    $selectedAgentOptions[$uagentcode] = $currentAgentItem;
+  }
+  $isVoucherUsed = mikhmon_is_hotspot_user_used($userdetails);
+  $agentSelectState = $isVoucherUsed ? 'disabled' : '';
+  $agentFieldMessage = $isVoucherUsed ? $_agent_locked_used_voucher : $_agent_edit_unused_voucher;
   
 
   if (substr(formatBytes2($udatalimit, 2), -2) == "MB") {
@@ -225,6 +243,8 @@ if ($currency == in_array($currency, $cekindo['indo'])) {
     $comment = ($_POST['comment']);
     $comment2 = ($_POST['comment2']);
     $hcomment = ($_POST['h_comment']);
+    $selectedAgent = mikhmon_sanitize_key($_POST['agentreseller']);
+    $originalAgent = mikhmon_sanitize_key($_POST['originalagentreseller']);
     $mbgb = ($_POST['mbgb']);
     if ($timelimit == "") {
       $timelimit = "0";
@@ -241,6 +261,19 @@ if ($currency == in_array($currency, $cekindo['indo'])) {
     }else{
       $usermode = "up-";
     }
+
+    if ($isVoucherUsed) {
+      $selectedAgent = $originalAgent;
+    } elseif ($selectedAgent != '' && !isset($agentResellerOptions[$selectedAgent]) && $selectedAgent != $originalAgent) {
+      $selectedAgent = '';
+    }
+    if ($selectedAgent != '' && isset($agentResellerOptions[$selectedAgent])) {
+      $selectedAgentCommission = $agentResellerOptions[$selectedAgent]['commission'];
+    } elseif ($selectedAgent == $originalAgent) {
+      $selectedAgentCommission = $uagentcommissionrule;
+    } else {
+      $selectedAgentCommission = '';
+    }
     
     if((substr($hcomment,3,1) == "/" && substr($hcomment,6,1) == "/")){
       $comment = $hcomment." ".$comment2;
@@ -251,6 +284,7 @@ if ($currency == in_array($currency, $cekindo['indo'])) {
     }else{
       $comment = $usermode.$comment;
     }
+    $comment = mikhmon_append_agent_marker($comment, $selectedAgent, $selectedAgentCommission);
 
     $API->comm("/ip/hotspot/user/set", array(
       ".id" => "$uid",
@@ -290,6 +324,8 @@ include('./voucher/printbt.php');
   <div>
     <?php if ($_SESSION['ubp'] != "") {
       echo "    <a class='btn bg-warning' href='./?hotspot=users&profile=" . $_SESSION['ubp'] . "&session=" . $session . "'><i class='fa fa-close'></i> ".$_close."</a>";
+    } elseif ($_SESSION['uba'] != "") {
+      echo "    <a class='btn bg-warning' href='./?hotspot=users&agent=" . $_SESSION['uba'] . "&session=" . $session . "'><i class='fa fa-close'></i> ".$_close."</a>";
     } elseif ($_SESSION['ubc'] != "") {
       echo "    <a class='btn bg-warning' href='./?hotspot=users&comment=" . $_SESSION['ubc'] . "&session=" . $session . "'><i class='fa fa-close'></i> ".$_close."</a>";
     } elseif ($_SESSION['hua'] != "") {
@@ -376,6 +412,26 @@ include('./voucher/printbt.php');
 			</select>
 		</td>
 	</tr>
+  <tr>
+    <td class="align-middle"><?= $_agent_reseller ?></td><td>
+      <select class="form-control" name="agentreseller" <?= $agentSelectState; ?>>
+        <option value=""><?= $_optional ?></option>
+        <?php foreach ($selectedAgentOptions as $agentKey => $agentItem) {
+          $agentOptionLabel = $agentItem['code'] . ' - ' . $agentItem['name'];
+          if ($agentItem['status'] == 'disable') {
+            $agentOptionLabel .= ' (' . $_status . ': disable)';
+          }
+          echo '<option value="' . $agentKey . '"';
+          if ($uagentcode == $agentKey) {
+            echo ' selected';
+          }
+          echo '>' . $agentOptionLabel . '</option>';
+        } ?>
+      </select>
+      <input type="hidden" name="originalagentreseller" value="<?= htmlspecialchars($uagentcode); ?>">
+      <small><?= $agentFieldMessage; ?></small>
+    </td>
+  </tr>
   <tr>
     <td class="align-middle">Mac Address</td><td><input class="form-control" type="text" value="<?= $umac; ?>"></td>
   </tr>

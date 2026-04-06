@@ -23,8 +23,36 @@ ini_set('max_execution_time', 300);
 if (!isset($_SESSION["mikhmon"])) {
   header("Location:../admin.php?id=login");
 } else {
+  $agentFilter = mikhmon_sanitize_key($_GET['agent']);
+  $agentLogRows = $API->comm("/system/script/print", array(
+    "?comment" => "mikhmon",
+  ));
+  $agentMarkerIndex = mikhmon_build_agent_marker_index($agentLogRows);
+  $sessionAgentKeys = mikhmon_get_agent_reseller_keys($agentreseller, $session);
+  $sessionAgentItems = array();
+  foreach ($sessionAgentKeys as $agentKey) {
+    $sessionAgentItems[$agentKey] = mikhmon_get_agent_reseller_item($agentreseller, $session, $agentKey);
+  }
 
-  if ($prof == "all") {
+  if ($agentFilter != "") {
+    $allUsers = $API->comm("/ip/hotspot/user/print");
+    $getuser = array();
+
+    foreach ($allUsers as $userItem) {
+      $resolvedAgentCode = mikhmon_parse_agent_marker(isset($userItem['comment']) ? $userItem['comment'] : '');
+      if ($resolvedAgentCode == '' && isset($userItem['name']) && isset($agentMarkerIndex[$userItem['name']])) {
+        $resolvedAgentCode = $agentMarkerIndex[$userItem['name']];
+      }
+
+      if ($resolvedAgentCode == $agentFilter) {
+        $getuser[] = $userItem;
+      }
+    }
+
+    $TotalReg = count($getuser);
+    $counttuser = $TotalReg;
+
+  } elseif ($prof == "all") {
     $getuser = $API->comm("/ip/hotspot/user/print");
     $TotalReg = count($getuser);
 
@@ -96,10 +124,10 @@ if (!isset($_SESSION["mikhmon"])) {
   <div class="row">
    <div class="col-6 pd-t-5 pd-b-5">
   <div class="input-group">
-    <div class="input-group-4 col-box-4">
+    <div class="input-group-3 col-box-3">
       <input id="filterTable" type="text" style="padding:5.8px;" class="group-item group-item-l" placeholder="<?= $_search ?>">
     </div>
-    <div class="input-group-4 col-box-4">
+    <div class="input-group-3 col-box-3">
       <select style="padding:5px;" class="group-item group-item-m" onchange="location = this.value; loader()" title="Filter by Profile">
         <option><?= $_profile ?> </option>
         <option value="./?hotspot=users&profile=all&session=<?= $session; ?>"><?= $_show_all ?></option>
@@ -111,8 +139,23 @@ if (!isset($_SESSION["mikhmon"])) {
       ?>
     </select>
   </div>
-  <div class="input-group-4 col-box-4">
-    <select style="padding:5px;" class="group-item group-item-r" id="comment" name="comment" onchange="location = './?hotspot=users&comment='+ this.value +'&session=<?= $session;?>';">
+  <div class="input-group-3 col-box-3">
+    <select style="padding:5px;" class="group-item group-item-m" id="agentreseller" name="agentreseller" onchange="location = this.value; loader()" title="Filter by Agent Reseller">
+    <option value="./?hotspot=users&profile=all&session=<?= $session; ?>"><?= $_agent_reseller ?></option>
+    <?php
+    foreach ($sessionAgentItems as $agentKey => $agentItem) {
+      $agentStatus = $agentItem['status'] == 'disable' ? ' (' . $_status . ': disable)' : '';
+      echo "<option value='./?hotspot=users&agent=" . $agentKey . "&session=" . $session . "'";
+      if ($agentFilter == $agentKey) {
+        echo " selected";
+      }
+      echo ">" . $agentItem['code'] . " - " . $agentItem['name'] . $agentStatus . "</option>";
+    }
+    ?>
+    </select>
+  </div>
+  <div class="input-group-3 col-box-3">
+    <select style="padding:5px;" class="group-item group-item-r" id="comment" name="comment" onchange="location = './?hotspot=users&comment='+ encodeURIComponent(this.value) +'&session=<?= $session;?>';">
     <?php
     if ($comm != "") {
     } else {
@@ -145,7 +188,7 @@ if (!isset($_SESSION["mikhmon"])) {
  
   <div class="col-6">
     <?php if ($comm != "") { ?>
-  <button class="btn bg-red" onclick="if(confirm('Are you sure to delete username by comment (<?= $comm; ?>)?')){loadpage('./?remove-hotspot-user-by-comment=<?= $comm; ?>&session=<?= $session; ?>');loader();}else{}" title="Remove user by comment <?= $comm; ?>">  <i class="fa fa-trash"></i> <?= $_by_comment ?></button>
+  <button class="btn bg-red" onclick="if(confirm('Are you sure to delete username by comment (<?= htmlspecialchars($comm, ENT_QUOTES); ?>)?')){loadpage('./?remove-hotspot-user-by-comment=<?= rawurlencode($comm); ?>&session=<?= $session; ?>');loader();}else{}" title="Remove user by comment <?= htmlspecialchars($comm, ENT_QUOTES); ?>">  <i class="fa fa-trash"></i> <?= $_by_comment ?></button>
     <?php ; }else if ($exp == "1"){ ?>
   <button class="btn bg-red" onclick="if(confirm('Are you sure to delete users?')){loadpage('./?remove-hotspot-user-expired=1&session=<?= $session; ?>');loader();}else{}" title="Remove user expired">  <i class="fa fa-trash"></i> Expired Users</button>
       <?php } ?>
@@ -184,6 +227,7 @@ if (!isset($_SESSION["mikhmon"])) {
     <th class="text-right align-middle pointer" title="Click to sort"><i class="fa fa-sort"></i> <?= $_uptime_user ?></th>
     <th class="text-right align-middle pointer" title="Click to sort"><i class="fa fa-sort"></i> Bytes In</th>
     <th class="text-right align-middle pointer" title="Click to sort"><i class="fa fa-sort"></i> Bytes Out</th>
+    <th class="pointer" title="Click to sort"><i class="fa fa-sort"></i> <?= $_agent_reseller ?></th>
     <th class="pointer" title="Click to sort"><i class="fa fa-sort"></i> <?= $_comment ?></th>
     </tr>
   </thead>
@@ -202,6 +246,12 @@ for ($i = 0; $i < $TotalReg; $i++) {
   $ubyteso = formatBytes($userdetails['bytes-out'], 2);
 
   $ucomment = $userdetails['comment'];
+  $uagentcode = mikhmon_parse_agent_marker($ucomment);
+  if ($uagentcode == '' && isset($agentMarkerIndex[$uname])) {
+    $uagentcode = $agentMarkerIndex[$uname];
+  }
+  $uagentlabel = mikhmon_get_agent_reseller_label($agentreseller, $session, $uagentcode);
+  $udisplaycomment = mikhmon_strip_agent_marker($ucomment);
   $udisabled = $userdetails['disabled'];
   $utimelimit = $userdetails['limit-uptime'];
   if ($utimelimit == '1s') {
@@ -243,13 +293,20 @@ for ($i = 0; $i < $TotalReg; $i++) {
   echo "<td style=' text-align:right'>" . $ubytesi . "</td>";
   echo "<td style=' text-align:right'>" . $ubyteso . "</td>";
   echo "<td>";
+  if ($uagentlabel != '') {
+    echo "<a href=./?hotspot=users&agent=" . $uagentcode . "&session=" . $session . " title='Filter by " . $uagentlabel . "'><i class='fa fa-user-circle-o'></i> " . $uagentlabel . "</a>";
+  } else {
+    echo '-';
+  }
+  echo "</td>";
+  echo "<td>";
   if ($uname == "default-trial") {
   } else if (substr($ucomment,0,3) == "vc-" || substr($ucomment,0,3) == "up-") {
-    echo "<a href=./?hotspot=users&comment=" . $ucomment . "&session=" . $session . " title='Filter by " . $ucomment . "'><i class='fa fa-search'></i> ". $ucomment." ". $udatalimit ." ".$utimelimit . "</a>";
+    echo "<a href=./?hotspot=users&comment=" . rawurlencode($ucomment) . "&session=" . $session . " title='Filter by " . htmlspecialchars($ucomment, ENT_QUOTES) . "'><i class='fa fa-search'></i> ". $udisplaycomment." ". $udatalimit ." ".$utimelimit . "</a>";
   } else if ($utimelimit == ' expired') {
-    echo "<a href=./?hotspot=users&profile=all&exp=1&session=" . $session . " title='Filter by expired'><i class='fa fa-search'></i> " . $ucomment." ". $udatalimit ." ".$utimelimit . "</a>";
+    echo "<a href=./?hotspot=users&profile=all&exp=1&session=" . $session . " title='Filter by expired'><i class='fa fa-search'></i> " . $udisplaycomment." ". $udatalimit ." ".$utimelimit . "</a>";
   }else{
-    echo $ucomment.' ';
+    echo $udisplaycomment.' ';
   }
   echo  "</td>";
 
