@@ -20,6 +20,7 @@ session_start();
 error_reporting(0);
 
 ini_set('max_execution_time', 300);
+ignore_user_abort(true);
 
 if (!isset($_SESSION["mikhmon"])) {
 	header("Location:../admin.php?id=login");
@@ -113,6 +114,7 @@ date_default_timezone_set($_SESSION['timezone']);
 		$handle = fopen($temp, 'w') or die('Cannot open file:  ' . $temp);
 		$data = $gen;
 		fwrite($handle, $data);
+		fclose($handle);
 
 		$a = array("1" => "", "", 1, 2, 2, 3, 3, 4);
 
@@ -157,12 +159,6 @@ date_default_timezone_set($_SESSION['timezone']);
 					"limit-bytes-total" => "$datalimit",
 					"comment" => "$commt",
 				));
-				// Progress loader dan flush setiap 10 voucher
-				if ($i % 10 == 0) {
-					echo "<script>document.getElementById('loader').style.display='inline';</script>";
-					flush();
-					if (function_exists('ob_flush')) ob_flush();
-				}
 				// Sleep setiap 50 voucher untuk throttle
 				if ($i % 50 == 0) {
 					sleep(1);
@@ -229,12 +225,6 @@ date_default_timezone_set($_SESSION['timezone']);
 					"limit-bytes-total" => "$datalimit",
 					"comment" => "$commt",
 				));
-				// Progress loader dan flush setiap 10 voucher
-				if ($i % 10 == 0) {
-					echo "<script>document.getElementById('loader').style.display='inline';</script>";
-					flush();
-					if (function_exists('ob_flush')) ob_flush();
-				}
 				// Sleep setiap 50 voucher untuk throttle
 				if ($i % 50 == 0) {
 					sleep(1);
@@ -244,10 +234,11 @@ date_default_timezone_set($_SESSION['timezone']);
 
 
 		if ($qty < 2) {
-			echo "<script>window.location='./?hotspot-user=" . $u[1] . "&session=" . $session . "'</script>";
+			header("Location: ./?hotspot-user=" . rawurlencode($u[1]) . "&session=" . rawurlencode($session));
 		} else {
-			echo "<script>window.location='./?hotspot-user=generate&session=" . $session . "'</script>";
+			header("Location: ./?hotspot-user=generate&session=" . rawurlencode($session));
 		}
+		exit;
 	}
 
 	$getprofile = $API->comm("/ip/hotspot/user/profile/print");
