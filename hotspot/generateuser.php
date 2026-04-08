@@ -19,8 +19,28 @@ session_start();
 // hide all error
 error_reporting(0);
 
-ini_set('max_execution_time', 300);
+ini_set('max_execution_time', 0);
+if (function_exists('set_time_limit')) {
+	@set_time_limit(0);
+}
 ignore_user_abort(true);
+
+if (!function_exists('mikhmon_reconnect_generate_api')) {
+	function mikhmon_reconnect_generate_api($API) {
+		global $iphost, $userhost, $passwdhost;
+
+		if (!isset($API)) {
+			return false;
+		}
+
+		$API->disconnect();
+		$API->debug = false;
+		$API->attempts = 2;
+		$API->delay = 1;
+
+		return $API->connect($iphost, $userhost, decrypt($passwdhost));
+	}
+}
 
 if (!isset($_SESSION["mikhmon"])) {
 	header("Location:../admin.php?id=login");
@@ -150,6 +170,12 @@ date_default_timezone_set($_SESSION['timezone']);
 			}
 
 			for ($i = 1; $i <= $qty; $i++) {
+				if ($i > 1 && ($i - 1) % 25 == 0) {
+					if (!mikhmon_reconnect_generate_api($API)) {
+						break;
+					}
+				}
+
 				$API->comm("/ip/hotspot/user/add", array(
 					"server" => "$server",
 					"name" => "$u[$i]",
@@ -216,6 +242,12 @@ date_default_timezone_set($_SESSION['timezone']);
 				}
 			}
 			for ($i = 1; $i <= $qty; $i++) {
+				if ($i > 1 && ($i - 1) % 25 == 0) {
+					if (!mikhmon_reconnect_generate_api($API)) {
+						break;
+					}
+				}
+
 				$API->comm("/ip/hotspot/user/add", array(
 					"server" => "$server",
 					"name" => "$u[$i]",

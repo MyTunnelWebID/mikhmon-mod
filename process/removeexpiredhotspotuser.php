@@ -18,15 +18,44 @@
 session_start();
 // hide all error
 error_reporting(0);
+ignore_user_abort(true);
+ini_set('max_execution_time', 0);
+if (function_exists('set_time_limit')) {
+  @set_time_limit(0);
+}
+
+if (!function_exists('mikhmon_reconnect_removeexpired_api')) {
+  function mikhmon_reconnect_removeexpired_api($API) {
+    global $iphost, $userhost, $passwdhost;
+
+    if (!isset($API)) {
+      return false;
+    }
+
+    $API->disconnect();
+    $API->debug = false;
+    $API->attempts = 2;
+    $API->delay = 1;
+
+    return $API->connect($iphost, $userhost, decrypt($passwdhost));
+  }
+}
+
 $getuser = $API->comm("/ip/hotspot/user/print", array(
   "?limit-uptime" => "1s",
 ));
 $TotalReg = count($getuser);
 
-$_SESSION['ubp'] = $getuser[0]['profile'];
+$_SESSION['ubp'] = $TotalReg > 0 && isset($getuser[0]['profile']) ? $getuser[0]['profile'] : '';
 $_SESSION['ubc'] = "";
 
 for ($i = 0; $i < $TotalReg; $i++) {
+  if ($i > 0 && $i % 25 == 0) {
+    if (!mikhmon_reconnect_removeexpired_api($API)) {
+      break;
+    }
+  }
+
   $userdetails = $getuser[$i];
   $uid = $userdetails['.id'];
 
