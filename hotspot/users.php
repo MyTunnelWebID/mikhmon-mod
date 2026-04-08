@@ -195,7 +195,7 @@ if (!isset($_SESSION["mikhmon"])) {
   <script>
     function printV(a,b){
     var comm = document.getElementById('comment').value;
-    var url = "./voucher/print.php?id="+comm+"&"+a+"="+b+"&session=<?= $session; ?>";
+    var url = "./voucher/print.php?id="+ encodeURIComponent(comm) +"&"+a+"="+b+"&session=<?= $session; ?>";
     if (comm === "" ){
       <?php if ($currency == in_array($currency, $cekindo['indo'])) { ?>
       alert('Silakan pilih salah satu Comment terlebih dulu!');

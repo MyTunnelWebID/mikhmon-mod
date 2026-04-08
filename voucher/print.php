@@ -64,9 +64,36 @@ if (!isset($_SESSION["mikhmon"])) {
     $TotalReg = count($getuser);
   } elseif ($id != "") {
     $usermode = explode('-', $id)[0];
-    $getuser = $API->comm('/ip/hotspot/user/print', array("?comment" => "$id", "?uptime" => "0s"));
+    $commentCandidates = array();
+    $commentCandidates[] = trim($id);
+
+    $normalizedComment = mikhmon_append_agent_marker(
+      mikhmon_strip_agent_marker($id),
+      mikhmon_parse_agent_marker($id),
+      mikhmon_parse_agent_commission_rule($id)
+    );
+    if ($normalizedComment != '' && !in_array($normalizedComment, $commentCandidates, true)) {
+      $commentCandidates[] = $normalizedComment;
+    }
+
+    $getuser = array();
+    foreach ($commentCandidates as $commentCandidate) {
+      if ($commentCandidate == '') {
+        continue;
+      }
+
+      $getuser = $API->comm('/ip/hotspot/user/print', array("?comment" => $commentCandidate, "?uptime" => "0s"));
+      if (count($getuser) > 0) {
+        break;
+      }
+    }
+
     $TotalReg = count($getuser);
   }
+  if ($TotalReg == 0) {
+    exit;
+  }
+
   $getuprofile = $getuser[0]['profile'];
 
 
