@@ -32,6 +32,7 @@ if (!isset($_SESSION["mikhmon"])) {
 
 // load config
   include('../include/config.php');
+  include('../include/config_helpers.php');
   include('../include/readcfg.php');
 
   include('../lib/formatbytesbites.php');
@@ -167,6 +168,23 @@ table.voucher {
   $timelimit = $regtable['limit-uptime'];
   $getdatalimit = $regtable['limit-bytes-total'];
   $comment = $regtable['comment'];
+  $agentcode = mikhmon_parse_agent_marker($comment);
+  $agentname = "";
+  $agentcontact = "";
+  $agentaddress = "";
+  $agentcommission = "";
+  $agentlabel = "";
+  if ($agentcode != "") {
+    $agentItem = mikhmon_get_agent_reseller_item($agentreseller, $session, $agentcode);
+    if ($agentItem['code'] != '') {
+      $agentcode = $agentItem['code'];
+      $agentname = $agentItem['name'];
+      $agentcontact = $agentItem['contact'];
+      $agentaddress = $agentItem['address'];
+      $agentcommission = $agentItem['commission'];
+      $agentlabel = mikhmon_get_agent_reseller_label($agentreseller, $session, $agentcode);
+    }
+  }
   if ($getdatalimit == 0) {
     $datalimit = "";
   } else {

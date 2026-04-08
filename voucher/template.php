@@ -1,4 +1,4 @@
-
+																								
 <style>
 	.qrcode{
 		height:80px;
@@ -81,6 +81,11 @@
       <td colspan="2" style="font-weight:bold; font-size:12px">Login: http://<?= $dnsname; ?></td>
 <!-- /  -->
     </tr>
+    <tr>
+      <!-- Agent Reseller  -->
+      <td colspan="2" style="font-weight:bold; font-size:12px"><?= $agentname; ?></td>
+<!-- /  -->
+    </tr>
 <!-- /  -->
   </tbody>
     </table>
@@ -88,3 +93,4 @@
     </tr>
   </tbody>
 </table>
+	        	        	        	        

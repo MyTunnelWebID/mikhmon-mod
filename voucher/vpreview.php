@@ -30,6 +30,7 @@ if (!isset($_SESSION["mikhmon"])) {
 
 // load config
   include('../include/config.php');
+  include('../include/config_helpers.php');
   include('../include/readcfg.php');
 
   include('../lib/formatbytesbites.php');
@@ -46,6 +47,31 @@ if (!isset($_SESSION["mikhmon"])) {
     $logo = "../img/logo-" . $session . ".png";
   } else {
     $logo = "../img/logo.png";
+  }
+
+  $agentcode = "";
+  $agentname = "";
+  $agentcontact = "";
+  $agentaddress = "";
+  $agentcommission = "";
+  $agentlabel = "";
+
+  $previewAgent = array();
+  $previewAgentKey = isset($_GET['agent']) ? mikhmon_sanitize_key($_GET['agent']) : '';
+  $previewAgents = mikhmon_get_enabled_agent_resellers($agentreseller, $session);
+  if ($previewAgentKey != '' && isset($previewAgents[$previewAgentKey])) {
+    $previewAgent = $previewAgents[$previewAgentKey];
+  } elseif (!empty($previewAgents)) {
+    $previewAgent = reset($previewAgents);
+  }
+
+  if (!empty($previewAgent)) {
+    $agentcode = isset($previewAgent['code']) ? $previewAgent['code'] : '';
+    $agentname = isset($previewAgent['name']) ? $previewAgent['name'] : '';
+    $agentcontact = isset($previewAgent['contact']) ? $previewAgent['contact'] : '';
+    $agentaddress = isset($previewAgent['address']) ? $previewAgent['address'] : '';
+    $agentcommission = isset($previewAgent['commission']) ? $previewAgent['commission'] : '';
+    $agentlabel = mikhmon_get_agent_reseller_label($agentreseller, $session, $agentcode);
   }
 
  

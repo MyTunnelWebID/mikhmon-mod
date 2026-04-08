@@ -39,6 +39,24 @@ Number Voucher:
 <?= $num; ?>
 <span id="num"><?= " [$num]"; ?></span>
 
+Agent Code :
+<?= $agentcode; ?>
+
+Agent Name :
+<?= $agentname; ?>
+
+Agent Contact :
+<?= $agentcontact; ?>
+
+Agent Address :
+<?= $agentaddress; ?>
+
+Agent Commission :
+<?= $agentcommission; ?>
+
+Agent Label :
+<?= $agentlabel; ?>
+
 Conditional :
 $usermode = "vc"
 username = password
